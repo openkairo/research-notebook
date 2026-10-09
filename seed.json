@@ -1,0 +1,853 @@
+[
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Mammakarzinom",
+    "en": "Breast carcinoma",
+    "pl": "Rak piersi"
+   },
+   "body": {
+    "de": "Fachbegriff für Brustkrebs: ein bösartiger Tumor, der vom Drüsengewebe der Brust ausgeht. Die häufigste Krebserkrankung bei Frauen; Männer können ebenfalls erkranken.",
+    "en": "Medical term for breast cancer: a malignant tumour arising from the glandular tissue of the breast. The most common cancer in women; men can also be affected.",
+    "pl": "Medyczna nazwa raka piersi: nowotwór złośliwy wywodzący się z tkanki gruczołowej piersi. Najczęstszy nowotwór u kobiet; chorować mogą też mężczyźni."
+   },
+   "tags": [
+    "Grundlagen"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Invasiv-duktales Karzinom (NST)",
+    "en": "Invasive ductal carcinoma (NST)",
+    "pl": "Rak inwazyjny przewodowy (NST)"
+   },
+   "body": {
+    "de": "Häufigste Form (ca. 70–80 %). Geht von den Milchgängen aus und ist in das umliegende Gewebe eingewachsen. NST heißt „no special type“, also kein besonderer Subtyp.",
+    "en": "The most common form (about 70–80 %). Starts in the milk ducts and has grown into surrounding tissue. NST means “no special type”.",
+    "pl": "Najczęstsza postać (ok. 70–80 %). Wychodzi z przewodów mlecznych i nacieka otaczającą tkankę. NST oznacza „no special type”, czyli bez szczególnego typu."
+   },
+   "tags": [
+    "Pathologie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Invasiv-lobuläres Karzinom",
+    "en": "Invasive lobular carcinoma",
+    "pl": "Rak inwazyjny zrazikowy"
+   },
+   "body": {
+    "de": "Zweithäufigste Form (ca. 10–15 %). Geht von den Drüsenläppchen aus, wächst oft diffus und ist in der Mammographie manchmal schwerer zu erkennen. Meist hormonrezeptor-positiv.",
+    "en": "Second most common form (about 10–15 %). Starts in the lobules, often grows diffusely and can be harder to see on a mammogram. Usually hormone-receptor positive.",
+    "pl": "Druga co do częstości postać (ok. 10–15 %). Wychodzi ze zrazików, często rośnie rozlanie i bywa trudniejsza do wykrycia w mammografii. Zwykle hormonozależna."
+   },
+   "tags": [
+    "Pathologie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "DCIS",
+    "en": "DCIS",
+    "pl": "DCIS"
+   },
+   "body": {
+    "de": "Duktales Carcinoma in situ: Krebszellen in den Milchgängen, die noch nicht in das umgebende Gewebe eingewachsen sind. Gilt als Vorstufe; wird meist operiert, oft mit Bestrahlung.",
+    "en": "Ductal carcinoma in situ: cancer cells inside the milk ducts that have not grown into surrounding tissue. Considered a precursor; usually treated with surgery, often plus radiotherapy.",
+    "pl": "Rak przewodowy in situ: komórki nowotworowe w przewodach mlecznych, które nie naciekły jeszcze otaczającej tkanki. Uważany za stan przedinwazyjny; zwykle leczony operacyjnie, często z radioterapią."
+   },
+   "tags": [
+    "Pathologie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Hormonrezeptor-Status (ER/PR)",
+    "en": "Hormone receptor status (ER/PR)",
+    "pl": "Status receptorów hormonalnych (ER/PR)"
+   },
+   "body": {
+    "de": "Zeigt, ob die Tumorzellen Andockstellen für Östrogen (ER) und Progesteron (PR) haben. Angabe meist in Prozent positiver Zellen oder als Score (z. B. IRS 0–12). Positiv heißt: Eine Antihormontherapie kann wirken.",
+    "en": "Shows whether tumour cells carry receptors for oestrogen (ER) and progesterone (PR). Usually reported as percent of positive cells or as a score (e.g. Allred 0–8). Positive means endocrine (anti-hormone) therapy can work.",
+    "pl": "Pokazuje, czy komórki guza mają receptory estrogenowe (ER) i progesteronowe (PR). Podawany zwykle jako odsetek komórek dodatnich lub w skali punktowej (np. Allred 0–8). Wynik dodatni oznacza, że hormonoterapia może być skuteczna."
+   },
+   "tags": [
+    "Pathologie",
+    "Rezeptoren"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "HER2",
+    "en": "HER2",
+    "pl": "HER2"
+   },
+   "body": {
+    "de": "Wachstumsrezeptor auf der Zelloberfläche. Bewertung per Immunhistochemie: 0, 1+, 2+, 3+. 3+ (oder 2+ mit positivem ISH-Test) = HER2-positiv, dann wirken Anti-HER2-Medikamente wie Trastuzumab. 1+ oder 2+ ohne Amplifikation = „HER2-low“, wichtig für Trastuzumab-Deruxtecan.",
+    "en": "Growth receptor on the cell surface. Scored by immunohistochemistry: 0, 1+, 2+, 3+. 3+ (or 2+ with positive ISH test) = HER2-positive, so anti-HER2 drugs such as trastuzumab work. 1+ or 2+ without amplification = “HER2-low”, relevant for trastuzumab deruxtecan.",
+    "pl": "Receptor wzrostu na powierzchni komórki. Ocena immunohistochemiczna: 0, 1+, 2+, 3+. 3+ (lub 2+ z dodatnim testem ISH) = HER2-dodatni, wtedy działają leki anty-HER2, np. trastuzumab. 1+ lub 2+ bez amplifikacji = „HER2-low”, istotne dla trastuzumabu derukstekanu."
+   },
+   "tags": [
+    "Pathologie",
+    "Rezeptoren"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Ki-67",
+    "en": "Ki-67",
+    "pl": "Ki-67"
+   },
+   "body": {
+    "de": "Marker für die Teilungsaktivität der Tumorzellen, in Prozent. Niedrig (etwa unter 10–15 %) spricht für langsames, hoch (etwa über 25–30 %) für schnelles Wachstum. Die Grenzwerte unterscheiden sich je nach Labor.",
+    "en": "Marker of how actively tumour cells are dividing, in percent. Low (roughly under 10–15 %) suggests slow growth, high (roughly over 25–30 %) fast growth. Cut-offs vary between labs.",
+    "pl": "Wskaźnik aktywności podziałowej komórek guza, w procentach. Niski (mniej więcej poniżej 10–15 %) przemawia za wolnym wzrostem, wysoki (powyżej ok. 25–30 %) za szybkim. Wartości graniczne zależą od laboratorium."
+   },
+   "tags": [
+    "Pathologie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Grading (G1–G3)",
+    "en": "Grading (G1–G3)",
+    "pl": "Stopień złośliwości histologicznej (G1–G3)"
+   },
+   "body": {
+    "de": "Wie stark sich die Tumorzellen vom gesunden Gewebe unterscheiden. G1 = gut differenziert (eher langsam), G2 = mäßig, G3 = schlecht differenziert (eher aggressiv).",
+    "en": "How much the tumour cells differ from healthy tissue. G1 = well differentiated (slower), G2 = moderately, G3 = poorly differentiated (more aggressive).",
+    "pl": "Jak bardzo komórki guza różnią się od zdrowej tkanki. G1 = dobrze zróżnicowany (wolniejszy), G2 = średnio, G3 = słabo zróżnicowany (bardziej agresywny)."
+   },
+   "tags": [
+    "Pathologie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "TNM-Klassifikation",
+    "en": "TNM classification",
+    "pl": "Klasyfikacja TNM"
+   },
+   "body": {
+    "de": "Beschreibt die Ausbreitung: T = Tumorgröße (T1 ≤ 2 cm, T2 2–5 cm, T3 > 5 cm, T4 Haut/Brustwand), N = befallene Lymphknoten (N0 keine), M = Fernmetastasen (M0 keine, M1 vorhanden). Ein vorangestelltes „p“ heißt pathologisch gesichert, „c“ klinisch, „y“ nach Vorbehandlung.",
+    "en": "Describes the extent: T = tumour size (T1 ≤ 2 cm, T2 2–5 cm, T3 > 5 cm, T4 skin/chest wall), N = involved lymph nodes (N0 none), M = distant metastases (M0 none, M1 present). Prefix “p” = pathological, “c” = clinical, “y” = after prior treatment.",
+    "pl": "Opisuje zaawansowanie: T = wielkość guza (T1 ≤ 2 cm, T2 2–5 cm, T3 > 5 cm, T4 skóra/ściana klatki piersiowej), N = zajęte węzły chłonne (N0 brak), M = przerzuty odległe (M0 brak, M1 obecne). Przedrostek „p” = ocena patologiczna, „c” = kliniczna, „y” = po leczeniu wstępnym."
+   },
+   "tags": [
+    "Stadium"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Triple-negativ (TNBC)",
+    "en": "Triple-negative (TNBC)",
+    "pl": "Potrójnie ujemny (TNBC)"
+   },
+   "body": {
+    "de": "ER, PR und HER2 sind negativ. Antihormon- und Anti-HER2-Therapien wirken dann nicht; Behandlung meist mit Chemotherapie, oft kombiniert mit Immuntherapie (Pembrolizumab).",
+    "en": "ER, PR and HER2 are all negative. Anti-hormone and anti-HER2 drugs do not work; treatment is usually chemotherapy, often combined with immunotherapy (pembrolizumab).",
+    "pl": "ER, PR i HER2 są ujemne. Hormonoterapia i leki anty-HER2 nie działają; leczenie to zwykle chemioterapia, często łączona z immunoterapią (pembrolizumab)."
+   },
+   "tags": [
+    "Subtypen"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Luminal A / Luminal B",
+    "en": "Luminal A / Luminal B",
+    "pl": "Luminalny A / Luminalny B"
+   },
+   "body": {
+    "de": "Molekulare Subtypen hormonrezeptor-positiver Tumoren. Luminal A: HER2-negativ, Ki-67 niedrig, meist gute Prognose. Luminal B: höheres Ki-67 und/oder HER2-positiv, oft zusätzlich Chemotherapie.",
+    "en": "Molecular subtypes of hormone-receptor-positive tumours. Luminal A: HER2-negative, low Ki-67, usually good prognosis. Luminal B: higher Ki-67 and/or HER2-positive, often chemotherapy in addition.",
+    "pl": "Podtypy molekularne guzów hormonozależnych. Luminalny A: HER2-ujemny, niskie Ki-67, zwykle dobre rokowanie. Luminalny B: wyższe Ki-67 i/lub HER2-dodatni, często dodatkowo chemioterapia."
+   },
+   "tags": [
+    "Subtypen"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Sentinel-Lymphknoten",
+    "en": "Sentinel lymph node",
+    "pl": "Węzeł wartowniczy"
+   },
+   "body": {
+    "de": "Der erste Lymphknoten im Abflussgebiet des Tumors. Er wird markiert, entnommen und untersucht. Ist er frei, kann man meist auf die Entfernung weiterer Achsellymphknoten verzichten.",
+    "en": "The first lymph node draining the tumour. It is marked, removed and examined. If it is free of cancer, removing further armpit nodes can usually be avoided.",
+    "pl": "Pierwszy węzeł chłonny na drodze spływu chłonki z guza. Jest oznaczany, usuwany i badany. Jeśli jest wolny od raka, zwykle można uniknąć usuwania kolejnych węzłów pachowych."
+   },
+   "tags": [
+    "Operation"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "BI-RADS",
+    "en": "BI-RADS",
+    "pl": "BI-RADS"
+   },
+   "body": {
+    "de": "Einstufung von Mammographie-, Ultraschall- und MRT-Befunden: 0 = unvollständig, 1 = unauffällig, 2 = gutartig, 3 = wahrscheinlich gutartig (Kontrolle), 4 = verdächtig (Biopsie), 5 = hochverdächtig, 6 = durch Biopsie gesicherter Krebs.",
+    "en": "Rating scale for mammogram, ultrasound and MRI findings: 0 = incomplete, 1 = negative, 2 = benign, 3 = probably benign (follow-up), 4 = suspicious (biopsy), 5 = highly suspicious, 6 = biopsy-proven cancer.",
+    "pl": "Skala oceny wyników mammografii, USG i MRI: 0 = niekompletne, 1 = bez zmian, 2 = zmiana łagodna, 3 = prawdopodobnie łagodna (kontrola), 4 = podejrzana (biopsja), 5 = wysoce podejrzana, 6 = rak potwierdzony biopsją."
+   },
+   "tags": [
+    "Bildgebung"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Stanzbiopsie",
+    "en": "Core needle biopsy",
+    "pl": "Biopsja gruboigłowa"
+   },
+   "body": {
+    "de": "Gewebeentnahme mit einer Hohlnadel unter Ultraschall- oder Röntgenkontrolle. Liefert die Diagnose sowie ER, PR, HER2, Ki-67 und Grading.",
+    "en": "Tissue sample taken with a hollow needle under ultrasound or X-ray guidance. Provides the diagnosis plus ER, PR, HER2, Ki-67 and grade.",
+    "pl": "Pobranie tkanki igłą pod kontrolą USG lub RTG. Daje rozpoznanie oraz ER, PR, HER2, Ki-67 i stopień złośliwości."
+   },
+   "tags": [
+    "Diagnostik"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Neoadjuvant / adjuvant",
+    "en": "Neoadjuvant / adjuvant",
+    "pl": "Neoadiuwantowe / adiuwantowe"
+   },
+   "body": {
+    "de": "Neoadjuvant = Therapie vor der Operation (z. B. um den Tumor zu verkleinern und das Ansprechen zu sehen). Adjuvant = Therapie nach der Operation, um das Rückfallrisiko zu senken.",
+    "en": "Neoadjuvant = treatment before surgery (e.g. to shrink the tumour and see how it responds). Adjuvant = treatment after surgery to lower the risk of recurrence.",
+    "pl": "Neoadiuwantowe = leczenie przed operacją (np. aby zmniejszyć guz i ocenić odpowiedź). Adiuwantowe = leczenie po operacji, aby zmniejszyć ryzyko nawrotu."
+   },
+   "tags": [
+    "Therapie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "pCR (pathologische Komplettremission)",
+    "en": "pCR (pathological complete response)",
+    "pl": "pCR (całkowita odpowiedź patologiczna)"
+   },
+   "body": {
+    "de": "Nach neoadjuvanter Therapie findet der Pathologe im OP-Präparat keine invasiven Tumorzellen mehr (ypT0/is ypN0). Gilt besonders bei HER2-positivem und triple-negativem Brustkrebs als günstiges Zeichen.",
+    "en": "After neoadjuvant therapy the pathologist finds no remaining invasive cancer in the surgical specimen (ypT0/is ypN0). A favourable sign, especially in HER2-positive and triple-negative breast cancer.",
+    "pl": "Po leczeniu neoadiuwantowym patolog nie stwierdza w materiale pooperacyjnym inwazyjnych komórek raka (ypT0/is ypN0). Korzystny czynnik, zwłaszcza w raku HER2-dodatnim i potrójnie ujemnym."
+   },
+   "tags": [
+    "Therapie"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "BRCA1 / BRCA2",
+    "en": "BRCA1 / BRCA2",
+    "pl": "BRCA1 / BRCA2"
+   },
+   "body": {
+    "de": "Gene, deren erbliche Veränderung (Mutation) das Risiko für Brust- und Eierstockkrebs deutlich erhöht. Ein Nachweis beeinflusst Therapie (z. B. PARP-Hemmer wie Olaparib), Operationsplanung und die Beratung von Angehörigen.",
+    "en": "Genes whose inherited mutation markedly raises the risk of breast and ovarian cancer. A positive result affects treatment (e.g. PARP inhibitors such as olaparib), surgical planning and counselling of relatives.",
+    "pl": "Geny, których dziedziczna mutacja znacznie zwiększa ryzyko raka piersi i jajnika. Wynik dodatni wpływa na leczenie (np. inhibitory PARP, jak olaparyb), planowanie operacji i poradnictwo dla krewnych."
+   },
+   "tags": [
+    "Genetik"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Tumorboard",
+    "en": "Tumour board",
+    "pl": "Konsylium onkologiczne"
+   },
+   "body": {
+    "de": "Konferenz, in der Fachleute aus Gynäkologie, Onkologie, Radiologie, Pathologie und Strahlentherapie gemeinsam den Behandlungsplan festlegen.",
+    "en": "Meeting in which specialists from gynaecology, oncology, radiology, pathology and radiotherapy agree on the treatment plan together.",
+    "pl": "Spotkanie, na którym specjaliści z ginekologii, onkologii, radiologii, patomorfologii i radioterapii wspólnie ustalają plan leczenia."
+   },
+   "tags": [
+    "Ablauf"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "glossary",
+  "data": {
+   "title": {
+    "de": "Port",
+    "en": "Port (port-a-cath)",
+    "pl": "Port naczyniowy"
+   },
+   "body": {
+    "de": "Kleine Kammer unter der Haut mit Schlauch in eine große Vene. Über ihn laufen Infusionen und Blutabnahmen, ohne dass jedes Mal eine Armvene punktiert werden muss.",
+    "en": "Small chamber under the skin with a catheter into a large vein. Infusions and blood draws go through it, so arm veins need not be punctured each time.",
+    "pl": "Mała komora pod skórą z cewnikiem do dużej żyły. Przez nią podaje się wlewy i pobiera krew bez każdorazowego nakłuwania żył ręki."
+   },
+   "tags": [
+    "Ablauf"
+   ],
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Tamoxifen",
+    "en": "Tamoxifen",
+    "pl": "Tamoxifen"
+   },
+   "cls": {
+    "de": "Antiöstrogen (SERM)",
+    "en": "Anti-oestrogen (SERM)",
+    "pl": "Antyestrogen (SERM)"
+   },
+   "body": {
+    "de": "Blockiert den Östrogenrezeptor an den Tumorzellen. Tablette, meist 5–10 Jahre; vor allem vor den Wechseljahren.",
+    "en": "Blocks the oestrogen receptor on tumour cells. Tablet, usually for 5–10 years; mainly before menopause.",
+    "pl": "Blokuje receptor estrogenowy w komórkach guza. Tabletka, zwykle przez 5–10 lat; głównie przed menopauzą."
+   },
+   "side": {
+    "de": "Hitzewallungen, Scheidentrockenheit/Ausfluss, erhöhtes Thrombose-Risiko, selten Veränderungen der Gebärmutterschleimhaut.",
+    "en": "Hot flushes, vaginal dryness/discharge, higher risk of blood clots, rarely changes to the lining of the womb.",
+    "pl": "Uderzenia gorąca, suchość/upławy pochwy, zwiększone ryzyko zakrzepicy, rzadko zmiany w błonie śluzowej macicy."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Letrozol / Anastrozol / Exemestan",
+    "en": "Letrozole / anastrozole / exemestane",
+    "pl": "Letrozol / anastrozol / eksemestan"
+   },
+   "cls": {
+    "de": "Aromatasehemmer",
+    "en": "Aromatase inhibitors",
+    "pl": "Inhibitory aromatazy"
+   },
+   "body": {
+    "de": "Senken die Östrogenbildung im Fettgewebe. Tablette, nach den Wechseljahren oder zusammen mit Ausschaltung der Eierstockfunktion.",
+    "en": "Lower oestrogen production in fatty tissue. Tablet, after menopause or together with ovarian function suppression.",
+    "pl": "Zmniejszają wytwarzanie estrogenów w tkance tłuszczowej. Tabletka, po menopauzie lub razem z supresją czynności jajników."
+   },
+   "side": {
+    "de": "Gelenk- und Muskelschmerzen, Knochendichteverlust (Osteoporose), Hitzewallungen, Müdigkeit.",
+    "en": "Joint and muscle pain, bone loss (osteoporosis), hot flushes, fatigue.",
+    "pl": "Bóle stawów i mięśni, utrata gęstości kości (osteoporoza), uderzenia gorąca, zmęczenie."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Goserelin / Leuprorelin",
+    "en": "Goserelin / leuprorelin",
+    "pl": "Goserelina / leuprorelina"
+   },
+   "cls": {
+    "de": "GnRH-Analoga",
+    "en": "GnRH analogues",
+    "pl": "Analogi GnRH"
+   },
+   "body": {
+    "de": "Schalten die Hormonbildung der Eierstöcke vorübergehend ab (künstliche Wechseljahre). Depotspritze alle 4 Wochen oder 3 Monate.",
+    "en": "Temporarily switch off hormone production in the ovaries (induced menopause). Depot injection every 4 weeks or 3 months.",
+    "pl": "Czasowo wyłączają produkcję hormonów przez jajniki (sztuczna menopauza). Zastrzyk depot co 4 tygodnie lub co 3 miesiące."
+   },
+   "side": {
+    "de": "Wechseljahrsbeschwerden, Stimmungsschwankungen, Knochendichteverlust.",
+    "en": "Menopausal symptoms, mood swings, bone loss.",
+    "pl": "Objawy menopauzy, wahania nastroju, utrata gęstości kości."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Trastuzumab (Herceptin®)",
+    "en": "Trastuzumab (Herceptin®)",
+    "pl": "Trastuzumab (Herceptin®)"
+   },
+   "cls": {
+    "de": "Anti-HER2-Antikörper",
+    "en": "Anti-HER2 antibody",
+    "pl": "Przeciwciało anty-HER2"
+   },
+   "body": {
+    "de": "Bindet an HER2 und bremst das Tumorwachstum. Nur bei HER2-positivem Brustkrebs. Infusion oder Spritze unter die Haut, meist alle 3 Wochen über 1 Jahr.",
+    "en": "Binds to HER2 and slows tumour growth. Only for HER2-positive breast cancer. Infusion or under-the-skin injection, usually every 3 weeks for 1 year.",
+    "pl": "Wiąże się z HER2 i hamuje wzrost guza. Tylko w raku HER2-dodatnim. Wlew lub zastrzyk podskórny, zwykle co 3 tygodnie przez 1 rok."
+   },
+   "side": {
+    "de": "Herzschwäche möglich → regelmäßige Herzultraschall-Kontrollen (LVEF). Infusionsreaktionen, Durchfall.",
+    "en": "Can weaken the heart → regular heart ultrasound checks (LVEF). Infusion reactions, diarrhoea.",
+    "pl": "Możliwe osłabienie serca → regularne echo serca (LVEF). Reakcje na wlew, biegunka."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Pertuzumab (Perjeta®)",
+    "en": "Pertuzumab (Perjeta®)",
+    "pl": "Pertuzumab (Perjeta®)"
+   },
+   "cls": {
+    "de": "Anti-HER2-Antikörper",
+    "en": "Anti-HER2 antibody",
+    "pl": "Przeciwciało anty-HER2"
+   },
+   "body": {
+    "de": "Blockiert HER2 an einer anderen Stelle als Trastuzumab; wird mit ihm kombiniert (doppelte Blockade), oft vor der Operation.",
+    "en": "Blocks HER2 at a different site than trastuzumab; given in combination with it (dual blockade), often before surgery.",
+    "pl": "Blokuje HER2 w innym miejscu niż trastuzumab; podawany razem z nim (podwójna blokada), często przed operacją."
+   },
+   "side": {
+    "de": "Durchfall, Hautausschlag, Herzkontrollen wie bei Trastuzumab.",
+    "en": "Diarrhoea, rash, heart monitoring as with trastuzumab.",
+    "pl": "Biegunka, wysypka, kontrola serca jak przy trastuzumabie."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Trastuzumab-Deruxtecan (Enhertu®)",
+    "en": "Trastuzumab deruxtecan (Enhertu®)",
+    "pl": "Trastuzumab derukstekan (Enhertu®)"
+   },
+   "cls": {
+    "de": "Antikörper-Wirkstoff-Konjugat (ADC)",
+    "en": "Antibody–drug conjugate (ADC)",
+    "pl": "Koniugat przeciwciało–lek (ADC)"
+   },
+   "body": {
+    "de": "Antikörper bringt ein Zellgift direkt an die Tumorzelle. Bei HER2-positivem und auch HER2-low metastasiertem Brustkrebs.",
+    "en": "The antibody delivers a cell toxin directly to the tumour cell. Used in metastatic HER2-positive and HER2-low breast cancer.",
+    "pl": "Przeciwciało dostarcza cytostatyk bezpośrednio do komórki guza. Stosowany w przerzutowym raku HER2-dodatnim i HER2-low."
+   },
+   "side": {
+    "de": "Übelkeit, Müdigkeit, Haarausfall, Blutbildveränderungen. Wichtig: Lungenentzündung (ILD) — neuer Husten oder Atemnot sofort melden.",
+    "en": "Nausea, fatigue, hair loss, blood count changes. Important: lung inflammation (ILD) — report new cough or breathlessness immediately.",
+    "pl": "Nudności, zmęczenie, wypadanie włosów, zmiany w morfologii. Ważne: śródmiąższowe zapalenie płuc (ILD) — nowy kaszel lub duszność zgłaszać natychmiast."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Epirubicin / Doxorubicin",
+    "en": "Epirubicin / doxorubicin",
+    "pl": "Epirubicyna / doksorubicyna"
+   },
+   "cls": {
+    "de": "Chemotherapie: Anthrazykline",
+    "en": "Chemotherapy: anthracyclines",
+    "pl": "Chemioterapia: antracykliny"
+   },
+   "body": {
+    "de": "Schädigen die Erbsubstanz sich teilender Zellen. Häufig kombiniert mit Cyclophosphamid (EC/AC), meist alle 2–3 Wochen als Infusion.",
+    "en": "Damage the DNA of dividing cells. Often combined with cyclophosphamide (EC/AC), usually as an infusion every 2–3 weeks.",
+    "pl": "Uszkadzają DNA dzielących się komórek. Często łączone z cyklofosfamidem (EC/AC), zwykle wlew co 2–3 tygodnie."
+   },
+   "side": {
+    "de": "Haarausfall, Übelkeit, Abfall der weißen Blutkörperchen (Infektgefahr), Schleimhautentzündung, roter Urin am Infusionstag, Herzbelastung.",
+    "en": "Hair loss, nausea, drop in white blood cells (infection risk), mouth sores, red urine on infusion day, strain on the heart.",
+    "pl": "Wypadanie włosów, nudności, spadek białych krwinek (ryzyko infekcji), zapalenie błon śluzowych, czerwony mocz w dniu wlewu, obciążenie serca."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Cyclophosphamid",
+    "en": "Cyclophosphamid",
+    "pl": "Cyclophosphamid"
+   },
+   "cls": {
+    "de": "Chemotherapie: Alkylans",
+    "en": "Chemotherapy: alkylating agent",
+    "pl": "Chemioterapia: lek alkilujący"
+   },
+   "body": {
+    "de": "Vernetzt die Erbsubstanz der Tumorzellen. Meist Teil von EC/AC oder TC.",
+    "en": "Cross-links the DNA of tumour cells. Usually part of EC/AC or TC.",
+    "pl": "Sieciuje DNA komórek nowotworowych. Zwykle część schematu EC/AC lub TC."
+   },
+   "side": {
+    "de": "Übelkeit, Blutbildveränderungen, Haarausfall, Blasenreizung (viel trinken).",
+    "en": "Nausea, blood count changes, hair loss, bladder irritation (drink plenty).",
+    "pl": "Nudności, zmiany w morfologii, wypadanie włosów, podrażnienie pęcherza (dużo pić)."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Paclitaxel / Docetaxel",
+    "en": "Paclitaxel / docetaxel",
+    "pl": "Paklitaksel / docetaksel"
+   },
+   "cls": {
+    "de": "Chemotherapie: Taxane",
+    "en": "Chemotherapy: taxanes",
+    "pl": "Chemioterapia: taksany"
+   },
+   "body": {
+    "de": "Hemmen die Zellteilung über das Zellskelett. Paclitaxel oft wöchentlich, Docetaxel alle 3 Wochen.",
+    "en": "Stop cell division by acting on the cell skeleton. Paclitaxel often weekly, docetaxel every 3 weeks.",
+    "pl": "Hamują podział komórek, działając na cytoszkielet. Paklitaksel często co tydzień, docetaksel co 3 tygodnie."
+   },
+   "side": {
+    "de": "Taubheit/Kribbeln in Händen und Füßen (Polyneuropathie), Nagelveränderungen, Haarausfall, Gelenkschmerzen, Wassereinlagerungen (Docetaxel).",
+    "en": "Numbness/tingling in hands and feet (neuropathy), nail changes, hair loss, joint pain, fluid retention (docetaxel).",
+    "pl": "Drętwienie/mrowienie dłoni i stóp (neuropatia), zmiany paznokci, wypadanie włosów, bóle stawów, zatrzymanie płynów (docetaksel)."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Carboplatin",
+    "en": "Carboplatin",
+    "pl": "Carboplatin"
+   },
+   "cls": {
+    "de": "Chemotherapie: Platinverbindung",
+    "en": "Chemotherapy: platinum compound",
+    "pl": "Chemioterapia: związek platyny"
+   },
+   "body": {
+    "de": "Vernetzt die Erbsubstanz. Vor allem bei triple-negativem Brustkrebs und BRCA-Mutation, oft mit Paclitaxel.",
+    "en": "Cross-links DNA. Mainly in triple-negative breast cancer and BRCA mutation, often with paclitaxel.",
+    "pl": "Sieciuje DNA. Głównie w raku potrójnie ujemnym i przy mutacji BRCA, często z paklitakselem."
+   },
+   "side": {
+    "de": "Abfall von Blutplättchen und weißen Blutkörperchen, Blutarmut, Übelkeit.",
+    "en": "Drop in platelets and white blood cells, anaemia, nausea.",
+    "pl": "Spadek płytek krwi i białych krwinek, niedokrwistość, nudności."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Capecitabin",
+    "en": "Capecitabin",
+    "pl": "Capecitabin"
+   },
+   "cls": {
+    "de": "Chemotherapie: Antimetabolit (Tablette)",
+    "en": "Chemotherapy: antimetabolite (tablet)",
+    "pl": "Chemioterapia: antymetabolit (tabletka)"
+   },
+   "body": {
+    "de": "Wird im Körper zu 5-FU umgewandelt. Tablette, z. B. nach der Operation wenn Tumorrest vorhanden oder bei Metastasen.",
+    "en": "Converted to 5-FU in the body. Tablet, e.g. after surgery when residual tumour remains, or for metastases.",
+    "pl": "W organizmie przekształca się w 5-FU. Tabletka, np. po operacji przy chorobie resztkowej lub w chorobie przerzutowej."
+   },
+   "side": {
+    "de": "Hand-Fuß-Syndrom (Rötung, Schmerzen an Handflächen/Fußsohlen), Durchfall, Müdigkeit.",
+    "en": "Hand-foot syndrome (redness, soreness of palms/soles), diarrhoea, fatigue.",
+    "pl": "Zespół ręka-stopa (zaczerwienienie, bolesność dłoni/stóp), biegunka, zmęczenie."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Pembrolizumab (Keytruda®)",
+    "en": "Pembrolizumab (Keytruda®)",
+    "pl": "Pembrolizumab (Keytruda®)"
+   },
+   "cls": {
+    "de": "Immuntherapie: PD-1-Hemmer",
+    "en": "Immunotherapy: PD-1 inhibitor",
+    "pl": "Immunoterapia: inhibitor PD-1"
+   },
+   "body": {
+    "de": "Löst die Bremse des Immunsystems, damit es Tumorzellen angreift. Bei triple-negativem Brustkrebs zusammen mit Chemotherapie vor und nach der Operation.",
+    "en": "Releases the immune system’s brake so it attacks tumour cells. In triple-negative breast cancer together with chemotherapy before and after surgery.",
+    "pl": "Zwalnia hamulec układu odpornościowego, aby atakował komórki guza. W raku potrójnie ujemnym razem z chemioterapią przed i po operacji."
+   },
+   "side": {
+    "de": "Autoimmune Entzündungen möglich: Schilddrüse, Darm (Durchfall), Lunge, Leber, Haut. Neue Beschwerden immer melden.",
+    "en": "Can cause autoimmune inflammation: thyroid, bowel (diarrhoea), lungs, liver, skin. Always report new symptoms.",
+    "pl": "Możliwe zapalenia autoimmunologiczne: tarczyca, jelita (biegunka), płuca, wątroba, skóra. Każdy nowy objaw zgłaszać."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Palbociclib / Ribociclib / Abemaciclib",
+    "en": "Palbociclib / ribociclib / abemaciclib",
+    "pl": "Palbocyklib / rybocyklib / abemacyklib"
+   },
+   "cls": {
+    "de": "CDK4/6-Hemmer",
+    "en": "CDK4/6 inhibitors",
+    "pl": "Inhibitory CDK4/6"
+   },
+   "body": {
+    "de": "Bremsen den Zellzyklus. Zusammen mit Antihormontherapie bei hormonrezeptor-positivem, HER2-negativem Brustkrebs (metastasiert; Abemaciclib und Ribociclib auch nach der OP bei hohem Risiko).",
+    "en": "Slow the cell cycle. Combined with anti-hormone therapy in HR-positive, HER2-negative breast cancer (metastatic; abemaciclib and ribociclib also after surgery when risk is high).",
+    "pl": "Hamują cykl komórkowy. Razem z hormonoterapią w raku HR-dodatnim, HER2-ujemnym (przerzutowym; abemacyklib i rybocyklib także po operacji przy wysokim ryzyku)."
+   },
+   "side": {
+    "de": "Abfall der weißen Blutkörperchen (regelmäßige Blutbilder), Müdigkeit, Durchfall (v. a. Abemaciclib), EKG-Kontrollen (Ribociclib), Leberwerte.",
+    "en": "Drop in white blood cells (regular blood counts), fatigue, diarrhoea (mainly abemaciclib), ECG checks (ribociclib), liver values.",
+    "pl": "Spadek białych krwinek (regularna morfologia), zmęczenie, biegunka (głównie abemacyklib), kontrola EKG (rybocyklib), próby wątrobowe."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Olaparib (Lynparza®)",
+    "en": "Olaparib (Lynparza®)",
+    "pl": "Olaparib (Lynparza®)"
+   },
+   "cls": {
+    "de": "PARP-Hemmer",
+    "en": "PARP inhibitor",
+    "pl": "Inhibitor PARP"
+   },
+   "body": {
+    "de": "Verhindert die Reparatur von Erbgutschäden in Tumorzellen mit BRCA-Mutation. Tablette.",
+    "en": "Prevents DNA repair in tumour cells with a BRCA mutation. Tablet.",
+    "pl": "Uniemożliwia naprawę DNA w komórkach guza z mutacją BRCA. Tabletka."
+   },
+   "side": {
+    "de": "Übelkeit, Müdigkeit, Blutarmut.",
+    "en": "Nausea, fatigue, anaemia.",
+    "pl": "Nudności, zmęczenie, niedokrwistość."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Sacituzumab Govitecan (Trodelvy®)",
+    "en": "Sacituzumab govitecan (Trodelvy®)",
+    "pl": "Sacytuzumab gowitekan (Trodelvy®)"
+   },
+   "cls": {
+    "de": "Antikörper-Wirkstoff-Konjugat (ADC)",
+    "en": "Antibody–drug conjugate (ADC)",
+    "pl": "Koniugat przeciwciało–lek (ADC)"
+   },
+   "body": {
+    "de": "Richtet sich gegen TROP-2 auf Tumorzellen. Bei vorbehandeltem metastasiertem triple-negativem und HR-positivem Brustkrebs.",
+    "en": "Targets TROP-2 on tumour cells. For previously treated metastatic triple-negative and HR-positive breast cancer.",
+    "pl": "Skierowany przeciw TROP-2 na komórkach guza. W uprzednio leczonym przerzutowym raku potrójnie ujemnym i HR-dodatnim."
+   },
+   "side": {
+    "de": "Abfall der weißen Blutkörperchen, Durchfall, Übelkeit, Haarausfall.",
+    "en": "Drop in white blood cells, diarrhoea, nausea, hair loss.",
+    "pl": "Spadek białych krwinek, biegunka, nudności, wypadanie włosów."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "med",
+  "data": {
+   "title": {
+    "de": "Zoledronsäure / Denosumab",
+    "en": "Zoledronic acid / denosumab",
+    "pl": "Kwas zoledronowy / denosumab"
+   },
+   "cls": {
+    "de": "Knochenschutz",
+    "en": "Bone-protecting agents",
+    "pl": "Leki chroniące kości"
+   },
+   "body": {
+    "de": "Stärken die Knochen bei Knochenmetastasen oder Knochendichteverlust durch Aromatasehemmer; Zoledronsäure senkt nach den Wechseljahren auch das Rückfallrisiko.",
+    "en": "Strengthen bones in bone metastases or bone loss from aromatase inhibitors; zoledronic acid also lowers recurrence risk after menopause.",
+    "pl": "Wzmacniają kości przy przerzutach do kości lub utracie masy kostnej po inhibitorach aromatazy; kwas zoledronowy po menopauzie zmniejsza też ryzyko nawrotu."
+   },
+   "side": {
+    "de": "Grippeähnliche Beschwerden nach der Infusion, niedriges Kalzium; selten Kiefernekrose — vorher Zahnarzt, Zahnbehandlungen absprechen.",
+    "en": "Flu-like symptoms after infusion, low calcium; rarely jaw osteonecrosis — see a dentist first and discuss dental work.",
+    "pl": "Objawy grypopodobne po wlewie, niski poziom wapnia; rzadko martwica kości szczęki — wcześniej wizyta u dentysty, zabiegi stomatologiczne konsultować."
+   },
+   "seed": true
+  }
+ },
+ {
+  "kind": "research",
+  "data": {
+   "title": {
+    "de": "Krebsinformationsdienst (DKFZ)",
+    "en": "German Cancer Information Service (DKFZ)",
+    "pl": "Niemiecka Służba Informacji o Raku (DKFZ)"
+   },
+   "body": {
+    "de": "Unabhängige, verständliche Informationen des Deutschen Krebsforschungszentrums. Kostenloses Telefon 0800 420 30 40 und E-Mail-Dienst.",
+    "en": "Independent, easy-to-read information from the German Cancer Research Center. Free phone line 0800 420 30 40 (Germany) and e-mail service.",
+    "pl": "Niezależne, przystępne informacje Niemieckiego Centrum Badań nad Rakiem. Bezpłatna infolinia 0800 420 30 40 (Niemcy) i porady e-mailowe."
+   },
+   "source": "https://www.krebsinformationsdienst.de/brustkrebs",
+   "date": "2026-10-08",
+   "seed": true
+  }
+ },
+ {
+  "kind": "research",
+  "data": {
+   "title": {
+    "de": "Patientenleitlinie Brustkrebs (Leitlinienprogramm Onkologie)",
+    "en": "German patient guideline on breast cancer",
+    "pl": "Niemieckie wytyczne dla pacjentów: rak piersi"
+   },
+   "body": {
+    "de": "Die offizielle S3-Leitlinie in Patientensprache: Diagnose, Behandlung, Nachsorge. Gut, um ärztliche Empfehlungen einzuordnen.",
+    "en": "The official German S3 guideline in plain language: diagnosis, treatment, follow-up. Useful for putting doctors’ recommendations in context.",
+    "pl": "Oficjalne niemieckie wytyczne S3 w języku dla pacjentów: diagnostyka, leczenie, kontrola po leczeniu. Pomaga zrozumieć zalecenia lekarzy."
+   },
+   "source": "https://www.leitlinienprogramm-onkologie.de/patientenleitlinien/brustkrebs",
+   "date": "2026-10-08",
+   "seed": true
+  }
+ },
+ {
+  "kind": "research",
+  "data": {
+   "title": {
+    "de": "National Cancer Institute: Breast Cancer",
+    "en": "National Cancer Institute: Breast Cancer",
+    "pl": "National Cancer Institute: rak piersi"
+   },
+   "body": {
+    "de": "Umfangreiche englischsprachige Informationen (PDQ) zu Behandlung, Studien und Medikamenten.",
+    "en": "Comprehensive information (PDQ) on treatment, clinical trials and drugs.",
+    "pl": "Obszerne informacje w języku angielskim (PDQ) o leczeniu, badaniach klinicznych i lekach."
+   },
+   "source": "https://www.cancer.gov/types/breast",
+   "date": "2026-10-08",
+   "seed": true
+  }
+ },
+ {
+  "kind": "research",
+  "data": {
+   "title": {
+    "de": "Narodowy Instytut Onkologii (Polen)",
+    "en": "National Institute of Oncology (Poland)",
+    "pl": "Narodowy Instytut Onkologii"
+   },
+   "body": {
+    "de": "Polnisches Krebszentrum mit Informationen für Patientinnen auf Polnisch.",
+    "en": "Polish national cancer institute with patient information in Polish.",
+    "pl": "Polski instytut onkologiczny z informacjami dla pacjentek po polsku."
+   },
+   "source": "https://www.nio.gov.pl",
+   "date": "2026-10-08",
+   "seed": true
+  }
+ }
+]

@@ -1,0 +1,10 @@
+# Daten, Zugänge, lokale Umgebung — nie ins Repo
+data/
+.env
+*.sqlite3
+*.sqlite3-*
+privat/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

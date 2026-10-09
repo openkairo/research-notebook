@@ -1,0 +1,35 @@
+# Betrieb hinter Traefik mit HTTPS (Let's Encrypt). Erwartet ein externes Docker-Netz "traefik"
+# und einen certresolver "letsencrypt". Start: docker compose -f docker-compose.traefik.yml up -d --build
+services:
+  notebook:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MAPPE_DB: /data/mappe.sqlite3
+      TZ: Europe/Berlin
+      PUBLIC_URL: https://${DOMAIN}
+    volumes:
+      - ./data:/data
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.notebook.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.notebook.entrypoints=websecure
+      - traefik.http.routers.notebook.tls.certresolver=letsencrypt
+      - traefik.http.routers.notebook.middlewares=notebook-auth@docker
+      - traefik.http.services.notebook.loadbalancer.server.port=8000
+      # Anmeldung über Traefik. Alternativ APP_PASSWORD in .env setzen und diese Middleware weglassen.
+      - traefik.http.middlewares.notebook-auth.basicauth.users=${BASIC_AUTH_USERS}
+      # Ohne Anmeldung: Zustandsauskunft und MCP (der Schlüssel im Pfad ist dort die Anmeldung)
+      - traefik.http.routers.notebook-offen.rule=Host(`${DOMAIN}`) && (Path(`/healthz`) || PathPrefix(`/mcp/`))
+      - traefik.http.routers.notebook-offen.entrypoints=websecure
+      - traefik.http.routers.notebook-offen.tls.certresolver=letsencrypt
+      - traefik.http.routers.notebook-offen.priority=100
+      - traefik.http.routers.notebook-offen.service=notebook
+networks:
+  traefik:
+    external: true

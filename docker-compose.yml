@@ -1,0 +1,17 @@
+# Einfacher Betrieb: ein Container, Daten im Ordner ./data, Oberfläche auf Port 8000.
+# Vorher: cp .env.example .env und APP_PASSWORD setzen.
+services:
+  notebook:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MAPPE_DB: /data/mappe.sqlite3
+      TZ: Europe/Berlin
+    volumes:
+      - ./data:/data
+    ports:
+      # Nur auf dem eigenen Rechner erreichbar. Für den Zugriff aus dem Netz einen Proxy mit HTTPS davorsetzen
+      # (siehe docker-compose.traefik.yml) oder bewusst auf "8000:8000" ändern — dann APP_PASSWORD setzen.
+      - "127.0.0.1:8000:8000"
