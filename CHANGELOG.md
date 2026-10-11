@@ -1,5 +1,9 @@
 # Changelog
 
+## Unveröffentlicht
+
+- Medikamente: lange Beschreibungen (Wirkung, Nebenwirkungen, Notizen) sind eingeklappt mit „Weiterlesen“; „Alle aufklappen“ auch im Reiter Medikamente
+
 ## 1.0.0 — 2026-10-09
 
 Erste öffentliche Fassung.

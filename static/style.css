@@ -493,3 +493,7 @@ fieldset.auswahl .haken { font-size: 14px; color: var(--tinte); align-items: fle
 .erklaer-fuss { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px 12px; border-top: 1px solid var(--linie); }
 .hinweis.tipp { margin: -4px 0 12px; }
 @media (max-width: 560px) { .erklaer-fenster { left: 8px; right: 8px; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); width: auto; } }
+
+/* Medikamente: eingeklappt Überschrift „Wirkung“ plus gut drei Zeilen */
+.aufklapp.hoch { max-height: 8.6em; }
+.aufklapp.offen { max-height: none; }

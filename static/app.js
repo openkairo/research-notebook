@@ -886,26 +886,31 @@
       }).join("") + "</div>" : '<div class="leer">' + esc(tr("empty_search")) + "</div>") + "</section>";
   }
   // Lange Erklärungen zeigen erst ein paar Zeilen; bei aktiver Suche ist alles offen, damit Treffer sichtbar sind
+  // Lange Texte (Begriffe, Medikamente) erst gekürzt zeigen; bei Suche offen, damit Treffer sichtbar sind
+  function aufklapp(id, inner, lang, extraClass) {
+    if (!lang) return inner;
+    var offen = state.query.trim() || state.glossAll || state.openGloss[id];
+    return '<div class="aufklapp' + (extraClass ? " " + extraClass : "") + (offen ? " offen" : "") + '">' + inner + "</div>" +
+      '<button type="button" class="mehr-knopf" data-act="gloss-toggle" data-id="' + id + '" aria-expanded="' + (offen ? "true" : "false") + '">' +
+      esc(tr(offen ? "less" : "more")) + (offen ? " ▴" : " ▾") + "</button>";
+  }
   function glossBody(e) {
     var text = L(e.data.body);
     if (!text) return "";
-    var lang = text.length > 200 || text.split("\n").length > 4;
-    if (!lang) return txt(e.data.body);
-    var offen = state.query.trim() || state.glossAll || state.openGloss[e.id];
-    return '<div class="aufklapp' + (offen ? " offen" : "") + '">' + txt(e.data.body) + "</div>" +
-      '<button type="button" class="mehr-knopf" data-act="gloss-toggle" data-id="' + e.id + '" aria-expanded="' + (offen ? "true" : "false") + '">' +
-      esc(tr(offen ? "less" : "more")) + (offen ? " ▴" : " ▾") + "</button>";
+    return aufklapp(e.id, txt(e.data.body), text.length > 200 || text.split("\n").length > 4);
   }
 
   function renderMeds() {
     var items = byKind("med").sort(function (a, b) { return L(a.data.title).localeCompare(L(b.data.title), state.lang); });
     var feld = function (key, val) { return L(val) ? '<div class="feld"><span class="eyebrow">' + esc(tr(key)) + "</span>" + txt(val) + "</div>" : ""; };
-    return '<section class="abschnitt"><div class="abschnitt-kopf"><h2>' + esc(tr("tab_med")) + "</h2></div>" +
+    return '<section class="abschnitt"><div class="abschnitt-kopf"><h2>' + esc(tr("tab_med")) + "</h2>" +
+      '<button type="button" class="knopf klein" data-act="gloss-all">' + esc(tr(state.glossAll ? "collapse_all" : "expand_all")) + "</button></div>" +
       aiInputRow("med", "ai_med_ph", "ai_med_btn") +
       (items.length ? '<div class="raster">' + items.map(function (e) {
         var d = e.data;
         return '<article class="karte"><h3>' + hl(L(d.title)) + "</h3>" + (L(d.cls) ? '<div class="meta"><span class="chip">' + hl(L(d.cls)) + "</span></div>" : "") +
-          feld("f_how", d.body) + feld("f_side", d.side) + feld("f_notes", d.notes) + filesHtml(e) + cardFoot(e) + "</article>";
+          aufklapp(e.id, feld("f_how", d.body) + feld("f_side", d.side) + feld("f_notes", d.notes),
+            (L(d.body) + L(d.side) + L(d.notes)).length > 260, "hoch") + filesHtml(e) + cardFoot(e) + "</article>";
       }).join("") + "</div>" : '<div class="leer">' + esc(tr("empty_search")) + "</div>") + "</section>";
   }
 
@@ -1847,7 +1852,7 @@
       return;
     }
     if (act === "gloss-toggle") {
-      if (state.glossAll) { state.glossAll = false; state.entries.forEach(function (x) { if (x.kind === "glossary") state.openGloss[x.id] = true; }); }
+      if (state.glossAll) { state.glossAll = false; state.entries.forEach(function (x) { if (x.kind === "glossary" || x.kind === "med") state.openGloss[x.id] = true; }); }
       state.openGloss[id] = !state.openGloss[id];
       render(); return;
     }
