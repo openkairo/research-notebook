@@ -387,6 +387,7 @@
     csv_hint: { de: "Doppelte Messungen werden beim erneuten Import übersprungen. Normbereiche sind übliche Werte für Heimmessungen — bei Bedarf anpassen.", en: "Duplicate measurements are skipped on re-import. Reference ranges are common values for home readings — adjust if needed.", pl: "Powtórzone pomiary są pomijane przy ponownym imporcie. Zakresy to typowe wartości dla pomiarów domowych — w razie potrzeby zmień." },
     csv_need_date: { de: "Bitte die Datumsspalte wählen.", en: "Please choose the date column.", pl: "Wybierz kolumnę z datą." },
     csv_need_col: { de: "Bitte mindestens eine Spalte zum Importieren auswählen.", en: "Please select at least one column to import.", pl: "Wybierz co najmniej jedną kolumnę." },
+    csv_switched: { de: "CSV erkannt — die Messwerte werden importiert. Bitte Zuordnung prüfen.", en: "CSV detected — the measurements will be imported. Please check the mapping.", pl: "Wykryto CSV — pomiary zostaną zaimportowane. Sprawdź przypisanie." },
     csv_reading: { de: "Lese Datei …", en: "Reading file …", pl: "Czytam plik …" },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
@@ -1695,6 +1696,14 @@
     el.innerHTML = html;
   }
   function addPending(list) {
+    var csvDatei = Array.prototype.filter.call(list || [], function (f) { return /\.csv$/i.test(f.name); })[0];
+    if (csvDatei && state.editKind === "value" && !state.editing) {
+      // Eine Messwert-Tabelle gehört in den Import, nicht als Anhang an einen einzelnen Wert
+      openCsvForm();
+      $("formStatus").textContent = tr("csv_switched");
+      csvLaden(csvDatei);
+      return;
+    }
     var skipped = [];
     Array.prototype.forEach.call(list || [], function (f) {
       if (!OK_EXT.test(f.name)) skipped.push(f.name + ": " + tr("bad_type"));
@@ -1768,6 +1777,19 @@
       h.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
       c.sample.map(function (r) { return "<tr>" + r.map(function (x) { return "<td>" + esc(x) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div></details>";
     $("formSpeichern").disabled = false;
+  }
+  function csvLaden(f) {
+    $("formStatus").textContent = tr("csv_reading");
+    var rd = new FileReader();
+    rd.onload = function () {
+      var text = String(rd.result || "");
+      fetch("/api/values/csv/preview", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+        body: JSON.stringify({ text: text, topic: state.topic }) })
+        .then(function (r) { return r.ok ? r.json() : errText(r, tr("err_load")); })
+        .then(function (pv) { pv.text = text; state.csv = pv; $("formStatus").textContent = ""; renderCsvMap(); },
+          function (err) { state.csv = null; renderCsvMap(); $("formStatus").textContent = err.message; });
+    };
+    rd.readAsText(f);
   }
   function readCsvMap() {
     var g = state.csv.guess;
@@ -2429,18 +2451,7 @@
   $("formFelder").addEventListener("change", function (ev) {
     if (ev.target.id === "fld-csvfile") {
       var f = ev.target.files && ev.target.files[0];
-      if (!f) return;
-      $("formStatus").textContent = tr("csv_reading");
-      var rd = new FileReader();
-      rd.onload = function () {
-        var text = String(rd.result || "");
-        fetch("/api/values/csv/preview", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
-          body: JSON.stringify({ text: text, topic: state.topic }) })
-          .then(function (r) { return r.ok ? r.json() : errText(r, tr("err_load")); })
-          .then(function (pv) { pv.text = text; state.csv = pv; $("formStatus").textContent = ""; renderCsvMap(); },
-            function (err) { state.csv = null; renderCsvMap(); $("formStatus").textContent = err.message; });
-      };
-      rd.readAsText(f);
+      if (f) csvLaden(f);
       return;
     }
     if (ev.target.getAttribute && ev.target.getAttribute("data-csv") === "param") {

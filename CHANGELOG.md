@@ -2,6 +2,8 @@
 
 ## Unveröffentlicht
 
+- CSV-Import versteht Monatsnamen (DE/EN/PL, auch abgekürzt wie „11. Okt. 2026“, „Oct 11, 2026“, „11 paź 2026“)
+- Eine CSV im Formular „+ Wert eintragen“ öffnet direkt den Import statt als Anhang zu scheitern
 - Messwerte aus CSV importieren (z. B. Blutdruckmessgerät, Gesundheits-App): Trennzeichen, Datum/Uhrzeit und typische Spalten (Systolisch, Diastolisch, Puls, Gewicht, Blutzucker; DE/EN/PL) werden erkannt, Zuordnung je Spalte mit Einheit und Normbereich, Vorschau, doppelte Messungen werden übersprungen
 - Messwerte mit Uhrzeit (mehrere Messungen am Tag); neue Vorlagen Blutdruck systolisch/diastolisch, Puls, Blutzucker
 - KI bekommt bei langen Messreihen Statistik (Anzahl, Zeitraum, Mittel, Min, Max) plus die letzten 30 Messungen

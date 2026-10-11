@@ -2545,6 +2545,31 @@ def _zahl_csv(x):
     return float(m.group(0).replace(",", ".")) if m else None
 
 
+MONATE = [  # Anfänge von Monatsnamen in DE/EN/PL (auch abgekürzt und gebeugt: „Okt.“, „Oct“, „października“)
+    ("jan", 1), ("jän", 1), ("sty", 1), ("feb", 2), ("lut", 2), ("mär", 3), ("maer", 3), ("mar", 3), ("apr", 4), ("kwi", 4),
+    ("mai", 5), ("may", 5), ("maj", 5), ("jun", 6), ("cze", 6), ("jul", 7), ("lip", 7), ("aug", 8), ("sie", 8),
+    ("sep", 9), ("wrz", 9), ("okt", 10), ("oct", 10), ("paź", 10), ("paz", 10), ("nov", 11), ("lis", 11),
+    ("dez", 12), ("dec", 12), ("gru", 12),
+]
+
+
+def _monat(wort):
+    w = wort.lower().strip(".")
+    return next((n for pre, n in MONATE if w.startswith(pre)), None) if len(w) >= 3 else None
+
+
+def _monat_im_text(t):
+    """„11. Okt. 2026“, „11 October 2026“, „Oct 11, 2026“, „11 paź 2026“ → (Jahr, Monat, Tag)"""
+    buchst = r"[A-Za-zÄÖÜäöüßąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+"
+    m = re.search(r"(\d{1,2})\.?\s+(" + buchst + r")\.?,?\s+(\d{4})", t)
+    if m and _monat(m.group(2)):
+        return int(m.group(3)), _monat(m.group(2)), int(m.group(1))
+    m = re.search(r"(" + buchst + r")\.?\s+(\d{1,2}),?\s+(\d{4})", t)
+    if m and _monat(m.group(1)):
+        return int(m.group(3)), _monat(m.group(1)), int(m.group(2))
+    return None
+
+
 def _datum_csv(x):
     """→ (YYYY-MM-DD, HH:MM oder ''), sonst None. Versteht 2026-10-11, 11.10.2026, 11/10/2026, mit oder ohne Uhrzeit."""
     t = str(x or "").strip()
@@ -2558,8 +2583,11 @@ def _datum_csv(x):
             h = 0
         zeit = f"{h:02d}:{mi:02d}"
     m = re.search(r"(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})", t)
+    mn = _monat_im_text(t) if not m else None
     if m:
         j, mo, ta = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    elif mn:
+        j, mo, ta = mn
     else:
         m = re.search(r"(\d{1,2})[./](\d{1,2})[./](\d{2,4})", t)
         if not m:
