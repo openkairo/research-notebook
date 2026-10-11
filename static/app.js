@@ -388,6 +388,9 @@
     csv_need_date: { de: "Bitte die Datumsspalte wählen.", en: "Please choose the date column.", pl: "Wybierz kolumnę z datą." },
     csv_need_col: { de: "Bitte mindestens eine Spalte zum Importieren auswählen.", en: "Please select at least one column to import.", pl: "Wybierz co najmniej jedną kolumnę." },
     csv_switched: { de: "CSV erkannt — die Messwerte werden importiert. Bitte Zuordnung prüfen.", en: "CSV detected — the measurements will be imported. Please check the mapping.", pl: "Wykryto CSV — pomiary zostaną zaimportowane. Sprawdź przypisanie." },
+    csv_ki_busy: { de: "✦ KI prüft die Spalten und entscheidet, wie die Werte zum Thema passend gespeichert werden …", en: "✦ AI is checking the columns and deciding how to store the values for this topic …", pl: "✦ AI sprawdza kolumny i decyduje, jak zapisać wartości dla tego tematu …" },
+    csv_ki_title: { de: "✦ Vorschlag der KI", en: "✦ AI suggestion", pl: "✦ Propozycja AI" },
+    csv_ki_fail: { de: "KI-Vorschlag nicht verfügbar — automatische Erkennung wird verwendet.", en: "AI suggestion unavailable — automatic detection is used.", pl: "Propozycja AI niedostępna — użyto automatycznego rozpoznania." },
     csv_reading: { de: "Lese Datei …", en: "Reading file …", pl: "Czytam plik …" },
     bp_title: { de: "Blutdruck", en: "Blood pressure", pl: "Ciśnienie krwi" },
     bp_new: { de: "+ Blutdruck", en: "+ Blood pressure", pl: "+ Ciśnienie" },
@@ -401,6 +404,8 @@
     bp_pulse_col: { de: "Puls", en: "Pulse", pl: "Tętno" },
     bp_show_all: { de: "Alle {n} Messungen anzeigen", en: "Show all {n} readings", pl: "Pokaż wszystkie {n} pomiarów" },
     bp_need: { de: "Bitte systolischen und diastolischen Wert als Zahl eingeben.", en: "Please enter systolic and diastolic values as numbers.", pl: "Wpisz wartości skurczowe i rozkurczowe jako liczby." },
+    hist_close: { de: "Verlauf einklappen", en: "Collapse history", pl: "Zwiń przebieg" },
+    bp_less: { de: "Nur die letzten 60", en: "Only the last 60", pl: "Tylko ostatnie 60" },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -922,6 +927,18 @@
   }
 
   // Blutdruck = eine Messung aus systolisch/diastolisch (+ Puls). Gespeichert bleiben drei Werte, angezeigt wird eine Zeile.
+  // Eigene Messreihen dieses Themas (Bezeichnung, Einheit, Grenzen) — damit Handeingaben in derselben Reihe landen
+  function eigeneReihen() {
+    var seen = {}, out = [];
+    state.entries.slice().sort(function (a, b) { return b.id - a.id; }).forEach(function (e) {
+      if (e.kind !== "value" || e.data.param !== "_other" || !e.data.paramLabel) return;
+      var k = e.data.paramLabel.toLowerCase();
+      if (seen[k]) return;
+      seen[k] = 1;
+      out.push({ label: e.data.paramLabel, unit: e.data.unit || "", low: e.data.low, high: e.data.high });
+    });
+    return out;
+  }
   function vitalArt(d) {
     var p = d.param || "", lab = (d.paramLabel || "").toLowerCase();
     if (p === "bp_sys" || /systol|\bsys\b|skurcz/.test(lab)) return "sys";
@@ -964,6 +981,12 @@
     return '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true">' + grenze(last.sys.data.high) + grenze(last.dia.data.high) +
       linie(sysV, "var(--akzent)") + linie(diaV, "var(--ki)") + "</svg>";
   }
+  function histSummary() {
+    return '<span class="zu">' + esc(tr("history")) + '</span><span class="auf">' + esc(tr("hist_close")) + "</span>";
+  }
+  function histFuss(key, extra) {
+    return '<div class="verlauf-fuss"><button type="button" class="mehr-knopf" data-act="hist-close" data-param="' + esc(key) + '">▴ ' + esc(tr("hist_close")) + "</button>" + (extra || "") + "</div>";
+  }
   function bpCard(list) {
     var last = list[list.length - 1], s = last.sys.data, d = last.dia.data;
     // Ø der letzten 7 Tage bezogen auf die jüngste Messung
@@ -991,9 +1014,11 @@
       '<div class="meta">' + fmtDate(last.date) + (last.time ? " " + esc(last.time) : "") + " · " + esc(tr("bp_avg7")) + " " + mittel(woche, "sys") + "/" + mittel(woche, "dia") +
       (s.high != null || d.high != null ? " · " + esc(tr("ref")) + " ≤ " + (s.high != null ? fmtNum(s.high) : "–") + "/" + (d.high != null ? fmtNum(d.high) : "–") : "") +
       " · " + list.length + " " + esc(tr("measurements")) + (ueber ? " · " + ueber + " " + esc(tr("bp_high_share")) : "") + "</div></div>" + bpSpark(list) +
-      '<details class="verlauf" data-param="bp"' + (open ? " open" : "") + "><summary>" + esc(tr("history")) + "</summary>" +
-      "<table><thead><tr><th>" + esc(tr("f_date")) + "</th><th>" + esc(tr("bp_value")) + "</th><th>" + esc(tr("bp_pulse_col")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
-      rows + "</tbody></table>" + (!state.bpAll && list.length > 60 ? '<button type="button" class="mehr-knopf" data-act="bp-all">' + esc(tr("bp_show_all").replace("{n}", list.length)) + "</button>" : "") +
+      '<details class="verlauf" data-param="bp"' + (open ? " open" : "") + "><summary>" + histSummary() + "</summary>" +
+      '<div class="verlauf-scroll"><table><thead><tr><th>' + esc(tr("f_date")) + "</th><th>" + esc(tr("bp_value")) + "</th><th>" + esc(tr("bp_pulse_col")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
+      rows + "</tbody></table></div>" +
+      histFuss("bp", list.length > 60 ? (state.bpAll ? '<button type="button" class="mehr-knopf" data-act="bp-less">' + esc(tr("bp_less")) + "</button>"
+        : '<button type="button" class="mehr-knopf" data-act="bp-all">' + esc(tr("bp_show_all").replace("{n}", list.length)) + "</button>") : "") +
       "</details>" + '<div class="verlauf">' + aiBlock(last.sys) + "</div></div>";
   }
   function bpVorlage(art) {
@@ -1033,9 +1058,9 @@
         '<span class="hinweis">' + esc(last.unit || "") + "</span> " + flagHtml(flag(last.value, last.low, last.high)) + "</div>" +
         '<div class="meta">' + fmtDate(last.date) + (refText(last.low, last.high, last.unit) ? " · " + esc(refText(last.low, last.high, last.unit)) : "") +
         " · " + g.items.length + " " + esc(tr("measurements")) + "</div></div>" + spark(g.items) +
-        '<details class="verlauf" data-param="' + esc(g.key) + '"' + (open ? " open" : "") + "><summary>" + esc(tr("history")) + "</summary>" +
-        "<table><thead><tr><th>" + esc(tr("f_date")) + "</th><th>" + esc(tr("f_value")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
-        rows + "</tbody></table></details>" + '<div class="verlauf">' + aiBlock(g.items[g.items.length - 1]) + "</div></div>";
+        '<details class="verlauf" data-param="' + esc(g.key) + '"' + (open ? " open" : "") + "><summary>" + histSummary() + "</summary>" +
+        '<div class="verlauf-scroll"><table><thead><tr><th>' + esc(tr("f_date")) + "</th><th>" + esc(tr("f_value")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
+        rows + "</tbody></table></div>" + histFuss(g.key) + "</details>" + '<div class="verlauf">' + aiBlock(g.items[g.items.length - 1]) + "</div></div>";
     }).join("");
     var analyses = byKind("analysis").filter(function (e) { return e.data.scope === "values"; }).sort(function (a, b) { return b.id - a.id; });
     var findings = byKind("finding").sort(function (a, b) { return (a.data.date || "") < (b.data.date || "") ? 1 : -1; });
@@ -1849,7 +1874,7 @@
     document.body.style.overflow = "hidden";
   }
   function csvParamOpts(cur) {
-    var presets = isHealth() ? PARAMS : [];
+    var presets = isHealth() ? PARAMS : PARAMS.filter(function (x) { return x.key === cur || ["bp_sys", "bp_dia", "pulse", "weight", "glucose"].indexOf(x.key) !== -1; });
     return presets.map(function (p) { return '<option value="' + p.key + '"' + (cur === p.key ? " selected" : "") + ">" + esc(p.n[state.lang]) + "</option>"; }).join("") +
       '<option value="_other"' + (cur === "_other" ? " selected" : "") + ">" + esc(tr("f_param_other")) + "</option>";
   }
@@ -1870,7 +1895,10 @@
         '<td><input type="text" inputmode="decimal" data-csv="low" value="' + (col.low != null ? fmtNum(col.low) : "") + '"></td>' +
         '<td><input type="text" inputmode="decimal" data-csv="high" value="' + (col.high != null ? fmtNum(col.high) : "") + '"></td></tr>';
     }).join("");
-    $("csvMap").innerHTML = '<p class="csv-info"><b>' + c.total + "</b> " + esc(tr("csv_found")) + "</p>" +
+    var kiBox = c.kiBusy ? '<div class="ki-status"><span class="spinner" aria-hidden="true"></span>' + esc(tr("csv_ki_busy")) + "</div>"
+      : c.ki ? '<div class="csv-ki"><div class="eyebrow">' + esc(tr("csv_ki_title")) + "</div><p>" + esc(L(c.ki.reason)) + '</p><span class="hinweis">' + esc(c.ki.model || "") + "</span></div>"
+      : c.kiFail ? '<p class="hinweis">' + esc(tr("csv_ki_fail")) + "</p>" : "";
+    $("csvMap").innerHTML = '<p class="csv-info"><b>' + c.total + "</b> " + esc(tr("csv_found")) + "</p>" + kiBox +
       '<div class="reihe"><label>' + esc(tr("csv_date")) + '<select id="fld-csvdate">' + colOpts(g.date_col, true) + "</select></label>" +
       "<label>" + esc(tr("csv_time")) + '<select id="fld-csvtime">' + colOpts(g.time_col, true) + "</select></label></div>" +
       '<div class="eyebrow">' + esc(tr("csv_cols")) + '</div><div class="mp-wrap"><table class="csv-tabelle"><thead><tr><th>' + esc(tr("csv_column")) + "</th><th>" + esc(tr("csv_as")) +
@@ -1878,7 +1906,7 @@
       '<details><summary>' + esc(tr("csv_preview")) + '</summary><div class="mp-wrap"><table class="csv-tabelle vorschau"><thead><tr>' +
       h.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
       c.sample.map(function (r) { return "<tr>" + r.map(function (x) { return "<td>" + esc(x) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div></details>";
-    $("formSpeichern").disabled = false;
+    $("formSpeichern").disabled = !!c.kiBusy;
   }
   function csvLaden(f) {
     $("formStatus").textContent = tr("csv_reading");
@@ -1888,10 +1916,35 @@
       fetch("/api/values/csv/preview", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
         body: JSON.stringify({ text: text, topic: state.topic }) })
         .then(function (r) { return r.ok ? r.json() : errText(r, tr("err_load")); })
-        .then(function (pv) { pv.text = text; state.csv = pv; $("formStatus").textContent = ""; renderCsvMap(); },
-          function (err) { state.csv = null; renderCsvMap(); $("formStatus").textContent = err.message; });
+        .then(function (pv) {
+          pv.text = text; state.csv = pv; $("formStatus").textContent = ""; renderCsvMap();
+          if (hasKey() || (state.settings && state.settings.claude_translate)) csvKi(pv);
+        }, function (err) { state.csv = null; renderCsvMap(); $("formStatus").textContent = err.message; });
     };
     rd.readAsText(f);
+  }
+  function csvKi(pv) {
+    pv.kiBusy = true; pv.ki = null; renderCsvMap();
+    $("formSpeichern").disabled = true;
+    fetch("/api/values/csv/ki", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+      body: JSON.stringify({ text: pv.text, topic: state.topic, lang: state.lang }) })
+      .then(function (r) { return r.ok ? r.json() : errText(r, tr("csv_ki_fail")); })
+      .then(function (k) {
+        if (state.csv !== pv) return;
+        pv.kiBusy = false;
+        if (k.date_col != null) pv.guess.date_col = k.date_col;
+        pv.guess.time_col = k.time_col;
+        // KI-Spalten übernehmen; Spalten, die sie nicht nennt, nicht importieren
+        var neu = pv.headers.map(function (h, i) {
+          if (i === pv.guess.date_col || i === pv.guess.time_col) return null;
+          var x = k.columns.filter(function (c) { return c.col === i; })[0];
+          return x ? { col: i, use: !!x.use, param: x.param, label: x.label || "", unit: x.unit || "", low: x.low, high: x.high }
+            : { col: i, use: false, param: "_other", label: h, unit: "", low: null, high: null };
+        }).filter(Boolean);
+        pv.guess.columns = neu;
+        pv.ki = k;
+        renderCsvMap();
+      }, function () { if (state.csv !== pv) return; pv.kiBusy = false; pv.kiFail = true; renderCsvMap(); });
   }
   function readCsvMap() {
     var g = state.csv.guess;
@@ -2081,14 +2134,16 @@
     } else if (kind === "value") {
       var isOther = d.param === "_other";
       if (!isHealth() && !entry) isOther = true;
-      var presets = !isHealth() ? [] : PARAMS.filter(function (x) { return !x.onko || isOnko() || d.param === x.key; });
+      var presets = !isHealth() ? PARAMS.filter(function (x) { return x.key === d.param; }) : PARAMS.filter(function (x) { return !x.onko || isOnko() || d.param === x.key; });
       if (!presets.length && !entry) isOther = true;
       var opts = presets.map(function (p) {
         return '<option value="' + p.key + '"' + (d.param === p.key ? " selected" : "") + ">" + esc(p.n[state.lang]) + "</option>";
       }).join("") + '<option value="_other"' + (isOther ? " selected" : "") + ">" + esc(tr("f_param_other")) + "</option>";
       var p0 = entry ? null : (presets[0] || { unit: "", low: null, high: null });
       html = '<label>' + esc(tr("f_param")) + '<select id="fld-param" name="param">' + opts + "</select></label>" +
-        '<label id="wrap-paramLabel"' + (isOther ? "" : " hidden") + ">" + esc(tr("f_param_name")) + inputHtml("paramLabel", "text", d.paramLabel || "") + "</label>" +
+        '<label id="wrap-paramLabel"' + (isOther ? "" : " hidden") + ">" + esc(tr("f_param_name")) +
+          '<input id="fld-paramLabel" name="paramLabel" type="text" list="reihenListe" autocomplete="off" value="' + esc(d.paramLabel || "") + '">' +
+          '<datalist id="reihenListe">' + eigeneReihen().map(function (r) { return '<option value="' + esc(r.label) + '">' + esc(r.unit || "") + "</option>"; }).join("") + "</datalist></label>" +
         '<div class="reihe"><label>' + esc(tr("f_date")) + inputHtml("date", "date", d.date || today()) + "</label>" +
         "<label>" + esc(tr("f_value")) + '<input id="fld-value" name="value" type="text" inputmode="decimal" value="' + esc(d.value != null ? fmtNum(d.value) : "") + '"></label>' +
         "<label>" + esc(tr("f_unit")) + inputHtml("unit", "text", entry ? d.unit || "" : p0.unit) + "</label></div>" +
@@ -2349,6 +2404,17 @@
     if (act === "bp-edit" && bpM) { openForm("bp", bpM); return; }
     if (act === "bp-del" && bpM) { state.confirm = "bp:" + bpk; render(); return; }
     if (act === "bp-all") { state.bpAll = true; render(); return; }
+    if (act === "bp-less") { state.bpAll = false; render(); return; }
+    if (act === "hist-close") {
+      var pk = b.getAttribute("data-param");
+      if (state.openParam === pk) state.openParam = null;
+      var det = b.closest("details");
+      if (det) det.open = false;
+      var karte = b.closest(".karte");
+      if (karte && karte.getBoundingClientRect().top < 0) karte.scrollIntoView({ block: "start" });
+      window.scrollBy(0, -80);
+      return;
+    }
     if (act === "bp-del-yes" && bpM) {
       Promise.all([bpM.sys, bpM.dia, bpM.pulse].filter(Boolean).map(function (e) { return api("DELETE", "/api/entries/" + e.id); }))
         .then(function () { state.confirm = null; toast(tr("deleted")); loadEntries(); }, function () { toast(tr("err_save")); });
@@ -2630,6 +2696,16 @@
     }
     if (ev.target.id === "fld-url" && !(state.preview && state.preview.url === ev.target.value.trim())) { loadPreview(); return; }
     if (ev.target.id === "fld-files") { addPending(ev.target.files); ev.target.value = ""; return; }
+    if (ev.target.id === "fld-paramLabel") {
+      var treffer = eigeneReihen().filter(function (r) { return r.label.toLowerCase() === ev.target.value.trim().toLowerCase(); })[0];
+      if (treffer) {
+        ev.target.value = treffer.label;  // exakte Schreibweise der vorhandenen Reihe
+        if (!$("fld-unit").value) $("fld-unit").value = treffer.unit;
+        if (!$("fld-low").value && treffer.low != null) $("fld-low").value = fmtNum(treffer.low);
+        if (!$("fld-high").value && treffer.high != null) $("fld-high").value = fmtNum(treffer.high);
+      }
+      return;
+    }
     if (ev.target.id !== "fld-param") return;
     var p = PARAM_BY_KEY[ev.target.value];
     $("wrap-paramLabel").hidden = ev.target.value !== "_other";

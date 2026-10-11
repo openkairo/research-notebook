@@ -564,3 +564,16 @@ td.mp-zahl.leer { color: var(--linie); font-weight: 400; }
 .blutdruck .kennzahl .wert { font-size: 26px; }
 .blutdruck .puls { font-family: var(--f-zahl); color: var(--akzent); margin-left: 6px; }
 .bp-felder input { font: 600 20px var(--f-zahl); text-align: center; }
+
+.csv-ki { border: 1px solid var(--ki); background: var(--ki-hell); border-radius: 10px; padding: 8px 12px; margin: 6px 0 10px; }
+.csv-ki .eyebrow { color: var(--ki); }
+.csv-ki p { margin: 4px 0 2px; font-size: 14px; }
+
+/* Verlauf: einklappbar, lange Listen im eigenen Rollbereich */
+details.verlauf > summary .auf { display: none; }
+details.verlauf[open] > summary .zu { display: none; }
+details.verlauf[open] > summary .auf { display: inline; }
+.verlauf-scroll { max-height: 460px; overflow: auto; border: 1px solid var(--linie); border-radius: 8px; margin-top: 6px; }
+.verlauf-scroll table { margin: 0; }
+.verlauf-scroll thead th { position: sticky; top: 0; background: var(--flaeche); z-index: 1; }
+.verlauf-fuss { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }

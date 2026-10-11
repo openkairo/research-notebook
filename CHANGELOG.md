@@ -2,6 +2,10 @@
 
 ## Unveröffentlicht
 
+- CSV-Import: Die KI entscheidet vor dem Import je Spalte, ob und wie gespeichert wird (Vorlage oder eigener Name, Einheit, zum Thema passender Normbereich) und begründet es; vorhandene Reihen haben Vorrang; funktioniert in jedem Thema
+- Doppelprüfung beim Import erkennt Blutdruck und Puls am Messwert, unabhängig vom gespeicherten Namen
+- Eingabe von Hand: „Anderer Wert“ schlägt die vorhandenen Reihen vor und übernimmt Einheit und Normbereich
+- Verlauf einklappbar (Knopf unten, Kopf wechselt), lange Verläufe im eigenen Rollbereich, „Nur die letzten 60“
 - Blutdruck je Messung: systolisch/diastolisch und Puls werden zu einer Karte zusammengeführt (127/67 mmHg · Puls), mit Ø 7 Tage, Anteil über Grenze, Verlauf je Messung; „+ Blutdruck“ für Einzelmessungen; erkennt auch importierte Spalten am Namen
 - KI bekommt Blutdruck je Messung mit Statistik (Mittel, Anteil ≥ 135/85, morgens/abends)
 - CSV-Import versteht Monatsnamen (DE/EN/PL, auch abgekürzt wie „11. Okt. 2026“, „Oct 11, 2026“, „11 paź 2026“)

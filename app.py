@@ -2695,6 +2695,66 @@ def csv_vorschau(c: CsvText):
     return {"delimiter": trenner, "headers": kopf, "sample": daten[:6], "total": len(daten), "guess": _csv_vorschlag(kopf, daten)}
 
 
+class CsvKi(BaseModel):
+    text: str
+    topic: int | None = None
+    lang: str = "de"
+
+
+@app.post("/api/values/csv/ki")
+def csv_ki_vorschlag(c: CsvKi):
+    """Die KI entscheidet vor dem Import, wie die Spalten gespeichert werden — passend zum Thema und zu vorhandenen Reihen."""
+    thema_setzen(c.topic)
+    _, kopf, daten = _csv_text(c.text)
+    with db() as con:
+        rows = [json.loads(r["data"]) for r in con.execute("SELECT data FROM entries WHERE kind='value' AND topic_id=?", (thema()["id"],))]
+    reihen = {}
+    for d in rows:
+        k = (d.get("param"), d.get("paramLabel") or "")
+        reihen.setdefault(k, {"param": d.get("param"), "label": d.get("paramLabel") or PARAM_NAMEN.get(d.get("param"), ""),
+                               "unit": d.get("unit", ""), "low": d.get("low"), "high": d.get("high"), "anzahl": 0})["anzahl"] += 1
+    vorlagen = {k: v for k, v in PARAM_NAMEN.items()}
+    tabelle = "\n".join(f"{i}: {k}" for i, k in enumerate(kopf))
+    beispiele = "\n".join(" | ".join(r) for r in daten[:8])
+    auftrag = (
+        f"Eine CSV-Datei soll als Messwerte in das Notizbuch zum Thema „{thema_name()}“ ({thema_bezug()}; Art: "
+        f"{'Gesundheit' if ist_gesundheit() else 'allgemein'}) importiert werden. Entscheide, wie die Werte gespeichert werden.\n\n"
+        f"Spalten (Index: Name):\n{tabelle}\n\nErste Zeilen:\n{beispiele}\n\n"
+        f"Messreihen, die es in diesem Thema schon gibt (wiederverwenden, damit gleiche Werte in derselben Reihe landen — gleicher "
+        f"param, gleiche Bezeichnung, gleiche Einheit): {json.dumps(list(reihen.values()), ensure_ascii=False) or '[]'}\n\n"
+        f"Feste Vorlagen (param-Schlüssel → Name), bevorzugt nutzen, wenn eine Spalte genau das misst: {json.dumps(vorlagen, ensure_ascii=False)}. "
+        "Sonst param \"_other\" mit einer klaren deutschen Bezeichnung ohne Einheit in Klammern.\n\n"
+        "Regeln: date_col = Spalte mit dem Datum (darf Uhrzeit enthalten); time_col = eigene Uhrzeit-Spalte oder null. "
+        "Für jede andere Spalte ein Eintrag in columns: use = true nur für echte Messwerte (Zahlen), false für Notizen, IDs, Text, "
+        "Geräteinfos. unit ohne Klammern. low/high = Referenz- bzw. Zielbereich, der zu DIESEM Thema passt (z. B. bei Bluthochdruck "
+        "und Heimmessung die Grenze 135/85 mmHg, bei anderen Themen die dort übliche Grenze; null, wenn es keinen sinnvollen gibt). "
+        "Vorhandene Reihen haben Vorrang: misst eine Spalte dasselbe wie eine vorhandene Reihe, nimm GENAU deren param, Bezeichnung und "
+        "Einheit (sonst entstehen doppelte Reihen). Nur wenn es noch keine Reihe gibt: Blutdruck als bp_sys/bp_dia, Puls als pulse "
+        "— die Oberfläche fasst Blutdruck und Puls je Messung zusammen. "
+        "'reason' erklärt in 1–3 Sätzen, was du entschieden hast und warum (z. B. welche Grenzwerte und weshalb). "
+        + mehrsprachig_auftrag(c.lang)
+    )
+    nummer = {"type": ["number", "null"]}
+    spalte = schema(col={"type": "integer"}, use={"type": "boolean"}, param={"type": "string"}, label={"type": "string"},
+                    unit={"type": "string"}, low=nummer, high=nummer)
+    out = llm_json(auftrag, schema(date_col={"type": ["integer", "null"]}, time_col={"type": ["integer", "null"]},
+                                   columns={"type": "array", "items": spalte}, reason=i18n_schema()), schnell=False, aufwand="low")
+    # Absichern: nur gültige Spalten, bekannte Schlüssel
+    gueltig = []
+    for x in out.get("columns", []):
+        if not isinstance(x.get("col"), int) or not (0 <= x["col"] < len(kopf)) or x["col"] in (out.get("date_col"), out.get("time_col")):
+            continue
+        if x.get("param") not in PARAM_NAMEN and x.get("param") != "_other":
+            x["param"] = "_other"
+        if x["param"] != "_other":
+            x["label"] = ""
+        gueltig.append(x)
+    dc = out.get("date_col") if isinstance(out.get("date_col"), int) and 0 <= out["date_col"] < len(kopf) else None
+    tc = out.get("time_col") if isinstance(out.get("time_col"), int) and 0 <= out["time_col"] < len(kopf) else None
+    protokoll(f"CSV-KI-Vorschlag Thema #{thema()['id']}: {sum(1 for x in gueltig if x.get('use'))} Spalten")
+    return {"date_col": dc, "time_col": tc, "columns": gueltig, "reason": out.get("reason"), "model": out["_model"]}
+
+
 class CsvImport(BaseModel):
     text: str
     topic: int | None = None
@@ -2717,9 +2777,12 @@ def csv_importieren(c: CsvImport):
             x["label"] = kopf[x["col"]]
     with db() as con:
         vorhanden = set()
+        def schl(param, label, datum, zeit, wert):
+            art = vital_art({"param": param, "paramLabel": label})
+            return ("vital:" + art, "", datum, zeit or "", wert) if art else (param, label or "", datum, zeit or "", wert)
         for r in con.execute("SELECT data FROM entries WHERE kind='value' AND topic_id=?", (tid,)):
             d = json.loads(r["data"])
-            vorhanden.add((d.get("param"), d.get("paramLabel") or "", d.get("date"), d.get("time") or "", d.get("value")))
+            vorhanden.add(schl(d.get("param"), d.get("paramLabel"), d.get("date"), d.get("time"), d.get("value")))
         neu_n, doppelt, ohne_datum, jetzt_ = 0, 0, 0, jetzt()
         for zeile_ in daten:
             dz = _datum_csv(zeile_[c.date_col])
@@ -2736,7 +2799,7 @@ def csv_importieren(c: CsvImport):
                     continue
                 param = x.get("param") or "_other"
                 label = (x.get("label") or "").strip() if param == "_other" else ""
-                schluessel = (param, label, datum, zeit, wert)
+                schluessel = schl(param, label, datum, zeit, wert)
                 if schluessel in vorhanden:
                     doppelt += 1
                     continue
