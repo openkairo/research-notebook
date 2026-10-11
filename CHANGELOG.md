@@ -1,6 +1,6 @@
 # Changelog
 
-## Unveröffentlicht
+## 1.1.0 — 2026-10-11
 
 - Videos & Links: „Alle Videos zusammenfassen“ — KI-Gesamtbild über alle Videos des Themas (Erkenntnisse mit Verweisen [Nr.], Widersprüche, Verlässlichkeit, Bezug zum Notizbuch, Reihenfolge zum Anschauen); Videos ohne Transkript werden gekennzeichnet
 - Analyse: eigene Abschnitte „Messwerte“ und „Medikamentenplan“ in jedem Thema, sobald welche hinterlegt sind (Trend, Anteil außerhalb des Zielbereichs, Wirkung der Medikamente an den Werten)

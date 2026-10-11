@@ -4,9 +4,9 @@ Ein persönliches Recherche-Notizbuch für den eigenen Server, dreisprachig (Deu
 
 | Bereich | Wofür |
 | --- | --- |
-| **Werte & Befunde** | Laborwerte und Messungen mit Verlauf und Referenzbereich, Befunde oder Dokumente samt PDF- und Foto-Anhängen |
+| **Werte & Befunde** | Laborwerte und Messungen mit Verlauf, Referenzbereich und **Diagrammen**, CSV-Import (z. B. Blutdruckmessgerät), Blutdruck je Messung, Befunde oder Dokumente samt PDF-, Foto- und CSV-Anhängen |
 | **Begriffe** | Fachbegriffe mit Erklärung, nach Schlagwort filterbar |
-| **Medikamente** | Wirkung, Nebenwirkungen, eigene Notizen |
+| **Medikamente** | Wirkung, Nebenwirkungen, eigene Notizen — und ein **Medikamentenplan** (Morgens/Mittags/Abends/Nachts, Stärke, Vorrat, Druckansicht) |
 | **Recherche** | Notizen mit Quellen |
 | **Studien** | Suche in PubMed und ClinicalTrials.gov, Übernehmen per Klick, PubMed-ID, NCT-Nummer oder DOI |
 | **Videos & Links** | YouTube-Videos und Links mit Vorschaubild, Transkript und Zusammenfassung |
@@ -17,7 +17,9 @@ Themen gibt es in zwei Arten: **Gesundheit** (mit Laborvorlagen und medizinische
 ### KI-Funktionen (optional, mit eigenem OpenAI-Schlüssel)
 
 - Befunde einordnen, auch angehängte PDFs und Fotos
-- Werte-Verläufe analysieren, Hinweise zum ganzen Thema erstellen
+- Werte-Verläufe analysieren, eine **Analyse des ganzen Themas** erstellen (inklusive Messwerte und Medikamentenplan)
+- **Gesamtbild** aller gespeicherten Studien bzw. Videos eines Themas
+- Beim CSV-Import entscheidet die KI, wie jede Spalte passend zum Thema gespeichert wird
 - Begriffe und Medikamente erklären
 - Recherche mit Websuche und Quellenangaben, Studien einordnen samt Belastbarkeit
 - **Markieren & erklären:** an jeder Stelle ein Wort markieren, erklären lassen, in Begriffe übernehmen
