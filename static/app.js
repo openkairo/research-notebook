@@ -363,6 +363,12 @@
     mp_out: { de: "Vorrat aufgebraucht", en: "Supply used up", pl: "Zapas wyczerpany" },
     mp_printed: { de: "Stand", en: "As of", pl: "Stan na" },
     mp_need_name: { de: "Bitte ein Medikament wählen oder einen Namen eingeben.", en: "Please choose a medicine or enter a name.", pl: "Wybierz lek lub wpisz nazwę." },
+    sg_title: { de: "Gesamtbild der Studien", en: "Overall picture of the studies", pl: "Obraz całości badań" },
+    sg_sub: { de: "Die KI liest alle gespeicherten Studien dieses Themas und fasst zusammen: was sie gemeinsam zeigen, wo sie sich widersprechen, wie belastbar das ist, welche laufenden Studien infrage kommen und was das für euch heißt.", en: "The AI reads all saved studies in this topic and summarises: what they show together, where they disagree, how robust it is, which ongoing trials may fit and what it means for you.", pl: "AI czyta wszystkie zapisane badania tego tematu i podsumowuje: co wspólnie pokazują, gdzie się różnią, jak wiarygodne to jest, które trwające badania mogą pasować i co to dla was znaczy." },
+    sg_btn: { de: "Alle Studien zusammenfassen", en: "Summarise all studies", pl: "Podsumuj wszystkie badania" },
+    sg_note: { de: "Nur die Studien dieses Themas — Titel, Abstracts, Eckdaten und bisherige Einordnungen werden dafür an die KI übermittelt.", en: "Only the studies in this topic — titles, abstracts, key data and earlier assessments are sent to the AI for this.", pl: "Tylko badania tego tematu — tytuły, streszczenia, dane i wcześniejsze oceny są w tym celu przesyłane do AI." },
+    sg_older: { de: "Frühere Zusammenfassungen", en: "Earlier summaries", pl: "Wcześniejsze podsumowania" },
+    sg_none: { de: "Noch keine Zusammenfassung erstellt.", en: "No summary created yet.", pl: "Brak podsumowania." },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -1423,6 +1429,18 @@
         '<div class="liste">' + list.map(studyCard).join("") + "</div></div>" : "";
     };
     var byYear = function (a, b) { return (b.data.year || "").localeCompare(a.data.year || "") || b.id - a.id; };
+    var gesamt = "";
+    if (all.length) {
+      var sums = byKind("analysis").filter(function (e) { return e.data.scope === "studies"; }).sort(function (a, b) { return b.id - a.id; });
+      var kannKi = hasKey() || (state.settings && state.settings.claude_translate);
+      gesamt = '<section class="analyse-panel"><div class="analyse-kopf"><div><h2>✦ ' + esc(tr("sg_title")) + "</h2><p>" + esc(tr("sg_sub")) + "</p></div>" +
+        (kannKi ? '<button type="button" class="knopf ki gross" data-act="ai-studies"' + (state.busy.studies ? " disabled" : "") + ">✦ " + esc(tr("sg_btn")) +
+          ' <span class="knopf-thema">(' + all.length + ")</span></button>" : "") + "</div>" +
+        '<p class="analyse-daten">ⓘ ' + esc(tr("sg_note")) + "</p>" + (kannKi ? "" : needKey()) + busyHtml("studies") +
+        (sums.length ? analysisCard(sums[0], true) : (kannKi && !state.busy.studies ? '<p class="hinweis">' + esc(tr("sg_none")) + "</p>" : "")) +
+        (sums.length > 1 ? '<details class="aeltere"><summary>' + esc(tr("sg_older")) + " (" + (sums.length - 1) + ')</summary><div class="liste">' +
+          sums.slice(1).map(function (e) { return analysisCard(e, false); }).join("") + "</div></details>" : "") + "</section>";
+    }
     var saved_html = all.length
       ? group("st_saved_trials", all.filter(function (e) { return e.data.source === "trials"; }).sort(byYear)) +
         group("st_saved_pub", all.filter(function (e) { return e.data.source === "pubmed"; }).sort(byYear)) +
@@ -1430,7 +1448,7 @@
       : '<div class="leer">' + esc(tr("st_empty")) + "</div>";
     return '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("tab_studies")) + "</h2><p>" + esc(tr("st_sub")) + "</p></div></div>" +
       '<div class="karte studien-suchkarte">' + form + results + "</div></section>" +
-      '<section class="abschnitt">' + saved_html + "</section>";
+      gesamt + '<section class="abschnitt">' + saved_html + "</section>";
   }
   function stSearch() {
     var st = state.st;
@@ -2136,8 +2154,8 @@
       aiCall("an" + id, "/api/ai/analyze/" + id, { lang: state.lang }).then(function (e) { replaceEntry(e); render(); }, function () {});
       return;
     }
-    if (act === "ai-values" || act === "ai-hints") {
-      var k = act === "ai-values" ? "values" : "hints";
+    if (act === "ai-values" || act === "ai-hints" || act === "ai-studies") {
+      var k = act === "ai-values" ? "values" : act === "ai-hints" ? "hints" : "studies";
       aiCall(k, "/api/ai/" + k, { lang: state.lang }).then(function (e) { replaceEntry(e); render(); }, function () {});
       return;
     }

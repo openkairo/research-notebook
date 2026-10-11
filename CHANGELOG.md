@@ -2,6 +2,7 @@
 
 ## Unveröffentlicht
 
+- Studien: „Alle Studien zusammenfassen“ — KI-Gesamtbild über alle gespeicherten Studien des Themas (gemeinsame Aussagen mit Verweisen [Nr.], Widersprüche, Belastbarkeit, laufende Studien, Bezug zum Notizbuch); frühere Fassungen bleiben eingeklappt erhalten
 - Reiter Medikamente zählt nur die Medikamente, nicht zusätzlich die Einträge im Medikamentenplan
 - Medikamentenplan: Beginn „nicht bekannt“ wählbar (auch per MCP mit `start: "unbekannt"`)
 - Medikamentenplan im Reiter Medikamente: aus den Medikamenten übernehmen oder frei anlegen; Stärke, Darreichungsform, Menge Morgens/Mittags/Abends/Nachts, Häufigkeit (täglich, Rhythmus, bei Bedarf, Zyklus), Zeitraum, Grund, Hinweise, verordnet von, Status; Tagesdosis und Vorrat mit „reicht bis“-Warnung; Druckansicht

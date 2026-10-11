@@ -2388,6 +2388,55 @@ def studie_importieren(i: StudieImport):
     return e
 
 
+@app.post("/api/ai/studies")
+def studien_gesamtbild(s_: Sprache):
+    """Synthese über alle gespeicherten Studien des aktuellen Themas; wird als Analyse (scope studies) gespeichert."""
+    thema_setzen(s_.topic)
+    with db() as con:
+        rows = [zeile(r) for r in con.execute("SELECT * FROM entries WHERE kind='study' AND topic_id=? ORDER BY id", (thema()["id"],))]
+    if not rows:
+        raise HTTPException(400, "In diesem Thema sind noch keine Studien gespeichert.")
+    def de(v):
+        return v.get("de") or next((x for x in v.values() if x), "") if isinstance(v, dict) else (v or "")
+    teile = []
+    for i, e in enumerate(rows, 1):
+        d = e["data"]
+        titel = d["title"] if isinstance(d.get("title"), str) else de(d.get("title"))
+        kennung = d.get("nct") or (f"PMID {d['pmid']}" if d.get("pmid") else d.get("url", ""))
+        eck = ", ".join(str(x) for x in (d.get("type") or d.get("phase"), d.get("year"), d.get("journal") or d.get("sponsor"),
+                                         f"n={d['enrollment']}" if d.get("enrollment") else "", d.get("status_de")) if x)
+        teil = f"### [{i}] {titel}\n{kennung} · {eck}"
+        sm = d.get("summary") or {}
+        if sm:
+            teil += f"\nBisherige Einordnung: {de(sm.get('short'))} Belastbarkeit: {de(sm.get('evidence'))}"
+        text = d.get("abstract") or de(d.get("body"))
+        if text:
+            teil += f"\n{'Registertext' if d.get('source') == 'trials' else 'Abstract'}: {text[:2500]}"
+        if d.get("countries"):
+            teil += f"\nLänder: {', '.join(d['countries'][:12])}"
+        if de(d.get("note")):
+            teil += f"\nEigene Notiz: {de(d.get('note'))}"
+        teile.append(teil)
+    auftrag = (
+        f"Fasse alle {len(rows)} Studien zusammen, die im Notizbuch zum Thema „{thema_name()}“ ({thema_bezug()}) gespeichert sind. "
+        "Verweise im Text auf einzelne Studien mit ihrer Nummer in eckigen Klammern, z. B. [2].\n\n" + "\n\n".join(teile)[:110000] + "\n\n"
+        "Zum Bezug das Notizbuch (Werte, Befunde, Medikamentenplan):\n\n" + kontext(details=False)[:12000] + "\n\n"
+        "Gliedere 'body' so: '## Überblick' (wie viele Studien, welche Arten, welcher Zeitraum, worum es insgesamt geht), "
+        "'## Was die Studien gemeinsam zeigen' (Kernaussagen mit Zahlen, je mit [Nr.]), "
+        "'## Widersprüche und offene Fragen', "
+        "'## Wie belastbar das Gesamtbild ist' (Studientypen von Meta-Analyse/RCT bis Beobachtung, Größe, Aktualität, Sponsoren; "
+        "eine Gesamteinschätzung), "
+        "'## Laufende Studien' (nur wenn welche dabei sind: worum, für wen, Orte in Deutschland/Polen, Status), "
+        "'## Was das für uns heißt' (Bezug zum Notizbuch, vorsichtig als Einschätzung; sagen, wenn sich etwas nicht übertragen lässt), "
+        "'## Fragen fürs Gespräch'. Wenn nur eine Studie gespeichert ist, sag das und fasse sie entsprechend kürzer. "
+        f"'title' z. B. „Studienlage {datetime.now():%d.%m.%Y} ({len(rows)} Studien)“. " + mehrsprachig_auftrag(s_.lang)
+    )
+    out = llm_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()), aufwand="high")
+    e = analyse_speichern("studies", out)
+    protokoll(f"Studien-Gesamtbild Thema #{thema()['id']} ({len(rows)} Studien)")
+    return e
+
+
 @app.post("/api/studies/{eid}/summary")
 def studie_zusammenfassen(eid: int, s: Sprache):
     thema_von_eintrag(eid)
