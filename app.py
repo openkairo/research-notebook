@@ -986,22 +986,22 @@ def ki_hinweise(s: Sprache):
     thema_setzen(s.topic)
     if not ist_gesundheit():
         auftrag = (
-            f"Lies das ganze Notizbuch zum Thema „{thema_name()}“ und erstelle Hinweise:\n\n" + kontext() + "\n\n"
+            f"Lies das ganze Notizbuch zum Thema „{thema_name()}“ und erstelle eine Analyse:\n\n" + analyse_kontext()[:90000] + "\n\n"
             "Gliedere: '## Wo wir stehen' (Stand in 3–5 Sätzen), '## Was als Nächstes sinnvoll ist', '## Was noch fehlt' "
             "(Lücken in Recherche, Unterlagen, Entscheidungen), '## Offene Fragen' (an wen man sie richten sollte), "
             "'## Tipps & Fallstricke' (konkret, belegt). Ist das Notizbuch noch leer, erkläre, womit man sinnvoll anfängt. "
-            f"'title' z. B. „Hinweise {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
+            f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
         )
         return analyse_speichern("hints", openai_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()), web=True, aufwand="medium"))
     auftrag = (
         f"Lies das ganze Notizbuch zum Thema „{thema_name()}“ ({thema_bezug()}) und erstelle persönliche Hinweise. "
-        "Bleib streng bei diesem Thema:\n\n" + kontext() + "\n\n"
+        "Bleib streng bei diesem Thema:\n\n" + analyse_kontext()[:90000] + "\n\n"
         "Gliedere: '## Wo wir stehen' (Lage in 3–5 Sätzen, soweit aus der Mappe ableitbar), '## Was als Nächstes "
         "üblich ist' (laut Leitlinie, als Orientierung), '## Was im Notizbuch noch fehlt' (Werte, Untersuchungen, "
         "Unterlagen oder offene Entscheidungen, die für genau dieses Thema typischerweise wichtig sind), "
         "'## Fragen fürs nächste Arztgespräch', '## Alltag' (konkrete, belegte Tipps zum Thema), '## Warnzeichen' "
         "(nur solche, die zu diesem Thema passen). Ist das Notizbuch noch leer, erkläre, womit man bei diesem Thema "
-        "sinnvoll anfängt. 'title' z. B. „Hinweise 08.10.2026“. " + mehrsprachig_auftrag(s.lang)
+        "sinnvoll anfängt. " + f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
     )
     return analyse_speichern("hints", openai_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()),
                                                   web=True, aufwand="medium"))
@@ -1384,6 +1384,29 @@ CHAT_REGELN = (
     "Befunde, Medikamente oder Videos enthält, beziehe dich konkret darauf (mit Datum). Empfiehl passende Videos aus der "
     "Notizbuch mit Titel, wenn sie helfen. Bei Websuche: nenne die Quellen als Markdown-Links."
 )
+
+
+def analyse_kontext():
+    """Alles, was im Thema steht — für die Analyse auf der Übersicht (der Hinweis in der Oberfläche verspricht das)."""
+    teile = [chat_kontext()]
+    with db() as con:
+        rows = [zeile(r) for r in con.execute("SELECT * FROM entries WHERE topic_id=? ORDER BY id", (thema()["id"],))]
+    def de(v):
+        return (v or {}).get("de") or next((x for x in (v or {}).values() if x), "") if isinstance(v, dict) else (v or "")
+    meds = [e for e in rows if e["kind"] == "med" and not de(e["data"].get("notes"))]
+    if meds:
+        teile.append("\n## Weitere Medikamente im Notizbuch (ohne eigene Notiz)")
+        teile += [f"- {de(e['data'].get('title'))}" + (f" ({de(e['data'].get('cls'))})" if de(e["data"].get("cls")) else "") for e in meds]
+    recherche = [e for e in rows if e["kind"] == "research" and not e["data"].get("seed")]
+    if recherche:
+        teile.append("\n## Inhalt der Recherche-Notizen")
+        for e in recherche[-40:]:
+            teile.append(f"### {de(e['data'].get('title'))}\n{de(e['data'].get('body'))[:900]}")
+    begriffe = [e for e in rows if e["kind"] == "glossary"]
+    if begriffe:
+        teile.append("\n## Begriffe, die bereits erklärt sind")
+        teile.append(", ".join(de(e["data"].get("title")) for e in begriffe))
+    return "\n".join(teile)
 
 
 def chat_kontext():

@@ -2,6 +2,8 @@
 
 ## Unveröffentlicht
 
+- Übersicht: „Analyse“ (vorher „KI-Hinweise“) steht prominent oben, mit Hinweis, dass alle Daten des Themas ausgewertet und an die KI übermittelt werden; frühere Analysen eingeklappt
+- Analyse liest jetzt wirklich alles: zusätzlich Medikamente ohne Notiz, Inhalt der Recherche-Notizen, Begriffe und Videos
 - Medikamente: lange Beschreibungen (Wirkung, Nebenwirkungen, Notizen) sind eingeklappt mit „Weiterlesen“; „Alle aufklappen“ auch im Reiter Medikamente
 
 ## 1.0.0 — 2026-10-09

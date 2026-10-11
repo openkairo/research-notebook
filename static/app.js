@@ -109,10 +109,10 @@
     ai_to_settings: { de: "Zu den Einstellungen", en: "Open settings", pl: "Przejdź do ustawień" },
     ai_busy: { de: "KI arbeitet … das kann 1–3 Minuten dauern.", en: "AI is working … this can take 1–3 minutes.", pl: "AI pracuje … to może potrwać 1–3 minuty." },
     ai_hint_disclaimer: { de: "KI-Einschätzung — kann Fehler enthalten und ersetzt keine ärztliche Diagnose. Immer mit dem Behandlungsteam besprechen.", en: "AI assessment — may contain errors and is not a medical diagnosis. Always discuss with the care team.", pl: "Ocena AI — może zawierać błędy i nie jest diagnozą lekarską. Zawsze omawiaj z zespołem leczącym." },
-    ai_hints: { de: "KI-Hinweise", en: "AI notes", pl: "Wskazówki AI" },
-    ai_hints_sub: { de: "Liest das ganze Notizbuch: Stand, nächste Schritte, Lücken, Fragen fürs Arztgespräch, Warnzeichen.", en: "Reads the whole notebook: status, next steps, gaps, questions for the doctor, warning signs.", pl: "Czyta cały notatnik: sytuacja, kolejne kroki, braki, pytania do lekarza, objawy alarmowe." },
-    ai_hints_btn: { de: "Hinweise erstellen", en: "Create notes", pl: "Utwórz wskazówki" },
-    ai_hints_empty: { de: "Noch keine Hinweise erstellt.", en: "No notes created yet.", pl: "Brak wskazówek." },
+    ai_hints: { de: "Analyse", en: "Analysis", pl: "Analiza" },
+    ai_hints_sub: { de: "Die KI wertet das ganze Thema aus und fasst zusammen: wo es steht, was als Nächstes üblich ist, was noch fehlt, Fragen fürs Arztgespräch und Warnzeichen.", en: "The AI evaluates the whole topic and summarises: where it stands, usual next steps, what is missing, questions for the doctor and warning signs.", pl: "AI ocenia cały temat i podsumowuje: sytuację, typowe kolejne kroki, braki, pytania do lekarza i objawy alarmowe." },
+    ai_hints_btn: { de: "Analyse", en: "Analysis", pl: "Analiza" },
+    ai_hints_empty: { de: "Noch keine Analyse erstellt.", en: "No analysis created yet.", pl: "Nie utworzono jeszcze analizy." },
     ai_values_btn: { de: "KI-Analyse der Werte", en: "AI analysis of values", pl: "Analiza AI wyników" },
     ai_analyses: { de: "KI-Analysen der Werte", en: "AI analyses of values", pl: "Analizy AI wyników" },
     ai_classify: { de: "KI-Einordnung", en: "AI assessment", pl: "Ocena AI" },
@@ -261,7 +261,7 @@
     f_ref_hint_g: { de: "Sollbereich optional — leer lassen, wenn es keinen gibt.", en: "Target range optional — leave empty if there is none.", pl: "Zakres docelowy opcjonalny — zostaw puste, jeśli go nie ma." },
     home_intro_g: { de: "Alles zu diesem Thema an einem Ort: Recherche-Notizen, Begriffe, Videos, Dokumente und Chat — in Deutsch, Englisch und Polnisch.", en: "Everything on this topic in one place: research notes, terms, videos, documents and chat — in German, English and Polish.", pl: "Wszystko na ten temat w jednym miejscu: notatki, pojęcia, filmy, dokumenty i czat — po niemiecku, angielsku i polsku." },
     disclaimer_g: { de: "Persönliche Sammlung. KI-Inhalte können Fehler enthalten — wichtige Punkte mit Fachleuten prüfen.", en: "Personal collection. AI content may contain errors — check important points with experts.", pl: "Osobisty zbiór. Treści AI mogą zawierać błędy — ważne kwestie sprawdź u specjalistów." },
-    ai_hints_sub_g: { de: "Liest das ganze Thema: Stand, nächste Schritte, Lücken, offene Fragen, Tipps.", en: "Reads the whole topic: status, next steps, gaps, open questions, tips.", pl: "Czyta cały temat: sytuacja, kolejne kroki, braki, otwarte pytania, wskazówki." },
+    ai_hints_sub_g: { de: "Die KI wertet das ganze Thema aus und fasst zusammen: wo es steht, was als Nächstes sinnvoll ist, was noch fehlt, offene Fragen und Tipps.", en: "The AI evaluates the whole topic and summarises: where it stands, sensible next steps, what is missing, open questions and tips.", pl: "AI ocenia cały temat i podsumowuje: sytuację, sensowne kolejne kroki, braki, otwarte pytania i wskazówki." },
     ai_hint_disclaimer_g: { de: "KI-Einschätzung — kann Fehler enthalten. Wichtige Punkte mit Fachleuten prüfen.", en: "AI assessment — may contain errors. Check important points with experts.", pl: "Ocena AI — może zawierać błędy. Ważne kwestie sprawdź u specjalistów." },
     ai_values_btn_g: { de: "KI-Analyse der Messwerte", en: "AI analysis of measurements", pl: "Analiza AI pomiarów" },
     c_s1_g: { de: "Fass mir den aktuellen Stand dieses Themas zusammen.", en: "Summarise where this topic stands.", pl: "Podsumuj aktualny stan tego tematu." },
@@ -312,6 +312,8 @@
     x_bad: { de: "Die Erklärung kam unvollständig an. Bitte noch einmal markieren.", en: "The explanation arrived incomplete. Please select it again.", pl: "Wyjaśnienie dotarło niekompletne. Zaznacz ponownie." },
     x_timeout: { de: "Keine Antwort nach 2 Minuten. Bitte später noch einmal versuchen.", en: "No answer after 2 minutes. Please try again later.", pl: "Brak odpowiedzi po 2 minutach. Spróbuj później." },
     x_hint: { de: "Tipp: Markiere an jeder Stelle ein Wort, um es erklären zu lassen.", en: "Tip: select a word anywhere to have it explained.", pl: "Wskazówka: zaznacz słowo w dowolnym miejscu, aby je wyjaśnić." },
+    ai_data_note: { de: "Analysiert werden alle Daten, die in diesem Thema hinterlegt sind — Werte, Befunde, Medikamente, Begriffe, Recherche-Notizen, Studien und Videos. Sie werden dafür an die KI (OpenAI) übermittelt; Inhalte angehängter PDFs fließen über ihre KI-Einordnung ein.", en: "All data stored in this topic is analysed — values, findings, medicines, terms, research notes, studies and videos. It is sent to the AI (OpenAI) for this; the content of attached PDFs is included via their AI assessment.", pl: "Analizowane są wszystkie dane zapisane w tym temacie — wyniki, opisy, leki, pojęcia, notatki, badania i filmy. W tym celu są przesyłane do AI (OpenAI); treść załączonych PDF-ów wchodzi przez ich ocenę AI." },
+    ai_older: { de: "Frühere Analysen", en: "Earlier analyses", pl: "Wcześniejsze analizy" },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -748,23 +750,25 @@
     }).join("");
     return '<section class="abschnitt">' + (ct ? '<h2 class="thema-titel">' + esc(ct.name[state.lang] || ct.name.de) + "</h2>" +
       (ct.desc && L(ct.desc) ? '<p class="thema-desc">' + esc(L(ct.desc)) + "</p>" : "") : "") +
-      '<p style="max-width:65ch;margin:0 0 16px">' + esc(tr("home_intro")) + "</p>" +
+      '<p style="max-width:65ch;margin:0 0 16px">' + esc(tr("home_intro")) + "</p>" + renderHints() +
       '<div class="kacheln">' + tiles.map(function (t) {
         return '<button type="button" class="kachel" data-tab="' + t[0] + '"><b>' + t[1] + "</b><span>" + esc(tr(t[2])) + "</span></button>";
       }).join("") + "</div></section>" +
       '<div class="zwei">' + (sectionOn("values") ? '<section class="abschnitt"><div class="abschnitt-kopf"><h2>' + esc(tr("latest_values")) + "</h2></div>" +
       '<div class="karte">' + (latest || '<span class="hinweis">' + esc(tr("empty_values")) + "</span>") + "</div></section>" : "") +
       '<section class="abschnitt"><div class="abschnitt-kopf"><h2>' + esc(tr("recent")) + "</h2></div>" +
-      '<div class="karte">' + (recent || '<span class="hinweis">' + esc(tr("recent_empty")) + "</span>") + "</div></section></div>" + renderHints();
+      '<div class="karte">' + (recent || '<span class="hinweis">' + esc(tr("recent_empty")) + "</span>") + "</div></section></div>";
   }
   function renderHints() {
     var hints = state.entries.filter(function (e) { return e.kind === "analysis" && e.data.scope === "hints"; })
       .sort(function (a, b) { return b.id - a.id; });
-    return '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>✦ ' + esc(tr("ai_hints")) + "</h2><p>" + esc(tr("ai_hints_sub")) + "</p></div>" +
-      (hasKey() ? '<button type="button" class="knopf ki" data-act="ai-hints"' + (state.busy.hints ? " disabled" : "") + ">✦ " + esc(tr("ai_hints_btn")) + "</button>" : "") + "</div>" +
-      (hasKey() ? "" : needKey()) + busyHtml("hints") +
-      (hints.length ? '<div class="liste">' + hints.map(function (e, i) { return analysisCard(e, i === 0); }).join("") + "</div>"
-        : hasKey() ? '<div class="leer">' + esc(tr("ai_hints_empty")) + "</div>" : "") + "</section>";
+    var knopf = hasKey() ? '<button type="button" class="knopf ki gross" data-act="ai-hints"' + (state.busy.hints ? " disabled" : "") + ">✦ " + esc(tr("ai_hints_btn")) + "</button>" : "";
+    var neueste = hints.length ? analysisCard(hints[0], true) : (hasKey() && !state.busy.hints ? '<p class="hinweis">' + esc(tr("ai_hints_empty")) + "</p>" : "");
+    var aeltere = hints.length > 1 ? '<details class="aeltere"><summary>' + esc(tr("ai_older")) + " (" + (hints.length - 1) + ")</summary>" +
+      '<div class="liste">' + hints.slice(1).map(function (e) { return analysisCard(e, false); }).join("") + "</div></details>" : "";
+    return '<section class="analyse-panel"><div class="analyse-kopf"><div><h2>✦ ' + esc(tr("ai_hints")) + "</h2><p>" + esc(tr("ai_hints_sub")) + "</p></div>" + knopf + "</div>" +
+      '<p class="analyse-daten">ⓘ ' + esc(tr("ai_data_note")) + "</p>" +
+      (hasKey() ? "" : needKey()) + busyHtml("hints") + neueste + aeltere + "</section>";
   }
 
   function renderSearch() {

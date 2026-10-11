@@ -497,3 +497,17 @@ fieldset.auswahl .haken { font-size: 14px; color: var(--tinte); align-items: fle
 /* Medikamente: eingeklappt Überschrift „Wirkung“ plus gut drei Zeilen */
 .aufklapp.hoch { max-height: 8.6em; }
 .aufklapp.offen { max-height: none; }
+
+/* Analyse oben auf der Übersicht */
+.analyse-panel { border: 1.5px solid var(--ki); background: var(--ki-hell); border-radius: 14px; padding: 16px 18px; margin: 4px 0 22px;
+  display: grid; gap: 10px; }
+.analyse-kopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.analyse-kopf h2 { font-size: 22px; color: var(--ki); }
+.analyse-kopf p { margin: 4px 0 0; max-width: 62ch; color: var(--tinte); }
+.knopf.gross { font-size: 16px; padding: 11px 22px; background: var(--ki); color: var(--flaeche); border-color: var(--ki); font-weight: 600; }
+.knopf.gross:hover { filter: brightness(1.08); }
+.analyse-daten { margin: 0; font-size: 13px; color: var(--leise); max-width: 80ch; }
+.analyse-panel .karte { background: var(--flaeche); }
+.analyse-panel details.aeltere > summary { cursor: pointer; color: var(--ki); font-size: 14px; }
+.analyse-panel details.aeltere .liste { margin-top: 8px; }
+@media (max-width: 520px) { .knopf.gross { width: 100%; } }
