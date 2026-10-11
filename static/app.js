@@ -429,7 +429,7 @@
     { id: "home", t: "tab_home" },
     { id: "values", t: "tab_values", kinds: ["value", "finding"], neu: "new_value" },
     { id: "glossary", t: "tab_glossary", kinds: ["glossary"], neu: "new_glossary" },
-    { id: "med", t: "tab_med", kinds: ["med", "medplan"], neu: "new_med" },
+    { id: "med", t: "tab_med", kinds: ["med"], neu: "new_med" },
     { id: "research", t: "tab_research", kinds: ["research"], neu: "new_research" },
     { id: "studies", t: "tab_studies", kinds: ["study"], neu: "new_study" },
     { id: "chat", t: "tab_chat" },
