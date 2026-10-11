@@ -511,3 +511,36 @@ fieldset.auswahl .haken { font-size: 14px; color: var(--tinte); align-items: fle
 .analyse-panel details.aeltere > summary { cursor: pointer; color: var(--ki); font-size: 14px; }
 .analyse-panel details.aeltere .liste { margin-top: 8px; }
 @media (max-width: 520px) { .knopf.gross { width: 100%; } }
+
+/* Medikamentenplan */
+.abschnitt.kopf-nur { margin-bottom: 0; }
+.medplan { border: 1px solid var(--linie); background: var(--flaeche); border-radius: 14px; padding: 16px 18px; }
+.mp-gruppe { margin-top: 10px; }
+.mp-wrap { overflow-x: auto; }
+.mp-tabelle { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mp-tabelle th { text-align: left; font-size: 12px; color: var(--leise); font-weight: 600; padding: 6px 8px; border-bottom: 2px solid var(--linie); white-space: nowrap; }
+.mp-tabelle td { padding: 9px 8px; border-bottom: 1px solid var(--linie); vertical-align: top; }
+.mp-tabelle th.mp-zahl, .mp-tabelle td.mp-zahl { text-align: center; width: 64px; }
+td.mp-zahl { font: 600 18px/1.2 var(--f-zahl); color: var(--akzent); }
+td.mp-zahl.leer { color: var(--linie); font-weight: 400; }
+.mp-name { min-width: 170px; }
+.mp-name b { font-weight: 600; }
+.mp-klein { font-size: 12px; color: var(--leise); margin-top: 2px; }
+.mp-info { min-width: 180px; font-size: 13.5px; }
+.mp-info .chip { margin-top: 4px; }
+.mp-aktion { white-space: nowrap; text-align: right; }
+.mp-schema { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.mp-schema input { text-align: center; font: 600 17px var(--f-zahl); }
+.chip.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+.chip.rot { background: color-mix(in srgb, var(--schlecht) 15%, transparent); color: var(--schlecht); }
+.knopf-thema { font-weight: 400; }
+.nur-druck { display: none; }
+@media print {
+  body.drucke-plan * { visibility: hidden !important; }
+  body.drucke-plan #planDruck, body.drucke-plan #planDruck * { visibility: visible !important; }
+  body.drucke-plan #planDruck { position: absolute; left: 0; top: 0; width: 100%; border: 0; padding: 0; background: #fff; color: #000; }
+  body.drucke-plan #planDruck .knoepfe, body.drucke-plan #planDruck .mp-aktion, body.drucke-plan #planDruck th:last-child,
+  body.drucke-plan #planDruck .ohne-druck { display: none !important; }
+  body.drucke-plan .nur-druck { display: block !important; color: #000; }
+  body.drucke-plan td.mp-zahl { color: #000; }
+}

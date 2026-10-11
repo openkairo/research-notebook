@@ -312,8 +312,56 @@
     x_bad: { de: "Die Erklärung kam unvollständig an. Bitte noch einmal markieren.", en: "The explanation arrived incomplete. Please select it again.", pl: "Wyjaśnienie dotarło niekompletne. Zaznacz ponownie." },
     x_timeout: { de: "Keine Antwort nach 2 Minuten. Bitte später noch einmal versuchen.", en: "No answer after 2 minutes. Please try again later.", pl: "Brak odpowiedzi po 2 minutach. Spróbuj później." },
     x_hint: { de: "Tipp: Markiere an jeder Stelle ein Wort, um es erklären zu lassen.", en: "Tip: select a word anywhere to have it explained.", pl: "Wskazówka: zaznacz słowo w dowolnym miejscu, aby je wyjaśnić." },
-    ai_data_note: { de: "Analysiert werden alle Daten, die in diesem Thema hinterlegt sind — Werte, Befunde, Medikamente, Begriffe, Recherche-Notizen, Studien und Videos. Sie werden dafür an die KI (OpenAI) übermittelt; Inhalte angehängter PDFs fließen über ihre KI-Einordnung ein.", en: "All data stored in this topic is analysed — values, findings, medicines, terms, research notes, studies and videos. It is sent to the AI (OpenAI) for this; the content of attached PDFs is included via their AI assessment.", pl: "Analizowane są wszystkie dane zapisane w tym temacie — wyniki, opisy, leki, pojęcia, notatki, badania i filmy. W tym celu są przesyłane do AI (OpenAI); treść załączonych PDF-ów wchodzi przez ich ocenę AI." },
+    ai_data_note: { de: "Analysiert wird nur dieses Thema — alle Daten, die hier hinterlegt sind: Werte, Befunde, Medikamentenplan, Medikamente, Begriffe, Recherche-Notizen, Studien und Videos. Andere Themen bleiben außen vor. Die Daten werden dafür an die KI (OpenAI) übermittelt; Inhalte angehängter PDFs fließen über ihre KI-Einordnung ein.", en: "Only this topic is analysed — all data stored here: values, findings, medication plan, medicines, terms, research notes, studies and videos. Other topics are left out. The data is sent to the AI (OpenAI) for this; the content of attached PDFs is included via their AI assessment.", pl: "Analizowany jest tylko ten temat — wszystkie zapisane tu dane: wyniki, opisy, plan leków, leki, pojęcia, notatki, badania i filmy. Inne tematy są pomijane. Dane są w tym celu przesyłane do AI (OpenAI); treść załączonych PDF-ów wchodzi przez ich ocenę AI." },
     ai_older: { de: "Frühere Analysen", en: "Earlier analyses", pl: "Wcześniejsze analizy" },
+    k_medplan: { de: "Medikamentenplan", en: "Medication plan", pl: "Plan leków" },
+    mp_title: { de: "Mein Medikamentenplan", en: "My medication plan", pl: "Mój plan leków" },
+    mp_sub: { de: "Was tatsächlich eingenommen wird — mit Stärke, Menge und Zeitpunkt. Fließt in Analyse und Chat ein.", en: "What is actually taken — with strength, amount and timing. Used in analysis and chat.", pl: "Co faktycznie jest przyjmowane — z dawką, ilością i porą. Uwzględniane w analizie i czacie." },
+    mp_add: { de: "+ In den Plan", en: "+ Add to plan", pl: "+ Do planu" },
+    mp_add_card: { de: "In den Plan", en: "Add to plan", pl: "Do planu" },
+    mp_print: { de: "Drucken", en: "Print", pl: "Drukuj" },
+    mp_empty: { de: "Noch kein Medikamentenplan. Füge ein Medikament hinzu — direkt hier oder über „In den Plan“ an einer Medikamenten-Karte.", en: "No medication plan yet. Add a medicine — here or via “Add to plan” on a medicine card.", pl: "Brak planu leków. Dodaj lek — tutaj lub przez „Do planu” na karcie leku." },
+    mp_regular: { de: "Regelmäßig", en: "Regular", pl: "Regularnie" },
+    mp_asneeded: { de: "Bei Bedarf", en: "As needed", pl: "W razie potrzeby" },
+    mp_inactive: { de: "Pausiert oder beendet", en: "Paused or ended", pl: "Wstrzymane lub zakończone" },
+    mp_med: { de: "Medikament", en: "Medicine", pl: "Lek" },
+    mp_from_list: { de: "Aus den Medikamenten wählen", en: "Choose from medicines", pl: "Wybierz z leków" },
+    mp_other: { de: "Anderes Medikament …", en: "Other medicine …", pl: "Inny lek …" },
+    mp_name: { de: "Name (Wirkstoff oder Handelsname)", en: "Name (active ingredient or brand)", pl: "Nazwa (substancja lub nazwa handlowa)" },
+    mp_strength: { de: "Stärke / Dosis je Einheit", en: "Strength / dose per unit", pl: "Moc / dawka na jednostkę" },
+    mp_strength_ph: { de: "z. B. 20 mg", en: "e.g. 20 mg", pl: "np. 20 mg" },
+    mp_form: { de: "Darreichungsform", en: "Form", pl: "Postać" },
+    mp_schema: { de: "Menge je Einnahme", en: "Amount per intake", pl: "Ilość na przyjęcie" },
+    mp_schema_hint: { de: "Anzahl der Einheiten, z. B. 1 oder 0,5 — leer = keine Einnahme", en: "Number of units, e.g. 1 or 0.5 — empty = none", pl: "Liczba jednostek, np. 1 lub 0,5 — puste = brak" },
+    mp_m: { de: "Morgens", en: "Morning", pl: "Rano" },
+    mp_mi: { de: "Mittags", en: "Noon", pl: "Południe" },
+    mp_a: { de: "Abends", en: "Evening", pl: "Wieczór" },
+    mp_n: { de: "Nachts", en: "Night", pl: "Noc" },
+    mp_freq: { de: "Häufigkeit", en: "Frequency", pl: "Częstotliwość" },
+    mp_freq_daily: { de: "täglich", en: "daily", pl: "codziennie" },
+    mp_freq_custom: { de: "bestimmte Tage / Rhythmus", en: "certain days / rhythm", pl: "określone dni / rytm" },
+    mp_freq_asneeded: { de: "bei Bedarf", en: "as needed", pl: "w razie potrzeby" },
+    mp_freq_once: { de: "einmalig / im Zyklus (z. B. Infusion)", en: "once / in cycles (e.g. infusion)", pl: "jednorazowo / w cyklach (np. wlew)" },
+    mp_freq_note: { de: "Rhythmus / Höchstmenge", en: "Rhythm / maximum", pl: "Rytm / maksimum" },
+    mp_freq_note_ph: { de: "z. B. „Mo, Mi, Fr“, „alle 21 Tage“, „max. 3× täglich“", en: "e.g. “Mon, Wed, Fri”, “every 21 days”, “max. 3× daily”", pl: "np. „pn, śr, pt”, „co 21 dni”, „maks. 3× dziennie”" },
+    mp_start: { de: "Seit", en: "Since", pl: "Od" },
+    mp_end: { de: "Bis (optional)", en: "Until (optional)", pl: "Do (opcjonalnie)" },
+    mp_status: { de: "Status", en: "Status", pl: "Status" },
+    mp_active: { de: "aktiv", en: "active", pl: "aktywny" },
+    mp_paused: { de: "pausiert", en: "paused", pl: "wstrzymany" },
+    mp_ended: { de: "beendet", en: "ended", pl: "zakończony" },
+    mp_reason: { de: "Grund", en: "Reason", pl: "Powód" },
+    mp_notes: { de: "Hinweise zur Einnahme", en: "Instructions", pl: "Wskazówki" },
+    mp_notes_ph: { de: "z. B. „zum Frühstück“, „nüchtern“, „nicht mit Milch“", en: "e.g. “with breakfast”, “on an empty stomach”", pl: "np. „do śniadania”, „na czczo”" },
+    mp_prescriber: { de: "Verordnet von", en: "Prescribed by", pl: "Przepisane przez" },
+    mp_stock: { de: "Vorrat (Einheiten)", en: "Supply (units)", pl: "Zapas (jednostki)" },
+    mp_stock_hint: { de: "Zählt ab heute; das Notizbuch rechnet aus, wie lange er reicht.", en: "Counted from today; the notebook works out how long it lasts.", pl: "Liczony od dziś; notatnik oblicza, na jak długo wystarczy." },
+    mp_daily: { de: "Tagesdosis", en: "Daily dose", pl: "Dawka dzienna" },
+    mp_lasts: { de: "Vorrat reicht bis", en: "Supply lasts until", pl: "Zapas wystarczy do" },
+    mp_low: { de: "Vorrat knapp", en: "Supply low", pl: "Mało zapasu" },
+    mp_out: { de: "Vorrat aufgebraucht", en: "Supply used up", pl: "Zapas wyczerpany" },
+    mp_printed: { de: "Stand", en: "As of", pl: "Stan na" },
+    mp_need_name: { de: "Bitte ein Medikament wählen oder einen Namen eingeben.", en: "Please choose a medicine or enter a name.", pl: "Wybierz lek lub wpisz nazwę." },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -367,6 +415,7 @@
   // Welche Felder hat welche Art von Eintrag — i18n-Felder werden übersetzt
   var KIND = {
     glossary: { tab: "glossary", fields: [["title", "f_term", "text"], ["body", "f_expl", "area"], ["tags", "f_tags", "tags"]] },
+    medplan: { tab: "med", fields: [] },
     med: { tab: "med", fields: [["title", "f_name", "text"], ["cls", "f_cls", "text"], ["body", "f_how", "area"], ["side", "f_side", "area"], ["notes", "f_notes", "area"]] },
     video: { tab: "videos", fields: [] },
     study: { tab: "studies", fields: [["title", "f_title", "text"], ["url", "f_study_url", "url"], ["year", "f_year", "text"], ["body", "f_study_note", "area"]] },
@@ -379,7 +428,7 @@
     { id: "home", t: "tab_home" },
     { id: "values", t: "tab_values", kinds: ["value", "finding"], neu: "new_value" },
     { id: "glossary", t: "tab_glossary", kinds: ["glossary"], neu: "new_glossary" },
-    { id: "med", t: "tab_med", kinds: ["med"], neu: "new_med" },
+    { id: "med", t: "tab_med", kinds: ["med", "medplan"], neu: "new_med" },
     { id: "research", t: "tab_research", kinds: ["research"], neu: "new_research" },
     { id: "studies", t: "tab_studies", kinds: ["study"], neu: "new_study" },
     { id: "chat", t: "tab_chat" },
@@ -389,7 +438,7 @@
 
   var state = { lang: "de", tab: "home", entries: [], query: "", tag: "", confirm: null, editing: null, editKind: null, pending: [],
     settings: null, models: null, busy: {}, drafts: {}, aiIn: { web: true, mappe: false }, aiErr: {}, confirmKey: false, st: { q: "", source: "pubmed", land: "", open: true, recent: false, results: null, total: 0, imp: "" }, vCat: "", vLang: "", preview: null,
-    chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, mcp: null, mcpShow: {}, mcpConfirm: null,
+    chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, planPrefill: null, showInactive: false, mcp: null, mcpShow: {}, mcpConfirm: null,
     topics: null, topic: null, topicConfirm: false, topicQuery: "" };
   var OK_EXT = /\.(pdf|jpe?g|png|heic|heif|webp)$/i;
   var MAX_BYTES = 30 * 1024 * 1024;
@@ -486,7 +535,7 @@
     var q = state.query.trim().toLowerCase();
     if (!q) return true;
     var d = e.data;
-    var hay = [d.title, d.body, d.cls, d.side, d.notes, d.note, d.source, d.tags, d.paramLabel, d.date, d.channel, d.url, paramName(d)].map(allText).join(" ").toLowerCase() +
+    var hay = [d.title, d.body, d.cls, d.side, d.notes, d.note, d.source, d.tags, d.paramLabel, d.date, d.channel, d.url, d.name, d.strength, d.reason, d.prescriber, d.freq_note, paramName(d)].map(allText).join(" ").toLowerCase() +
       " " + (e.files || []).map(function (f) { return f.name; }).join(" ").toLowerCase();
     return hay.indexOf(q) !== -1;
   }
@@ -745,7 +794,7 @@
         fmtNum(last.value) + " " + esc(last.unit || "") + "</span> " + flagHtml(flag(last.value, last.low, last.high)) + "</span></div>";
     }).join("");
     var recent = state.entries.slice(0, 8).map(function (e) {
-      var titel = e.kind === "value" ? paramName(e.data) + ": " + fmtNum(e.data.value) + " " + (e.data.unit || "") : L(e.data.title);
+      var titel = e.kind === "value" ? paramName(e.data) + ": " + fmtNum(e.data.value) + " " + (e.data.unit || "") : e.kind === "medplan" ? planTitle(e.data) : L(e.data.title);
       return '<div class="zeile-klein"><span class="titel">' + esc(titel) + '</span><span class="leise">' + esc(tr("k_" + e.kind)) + " · " + fmtDate(e.updated) + "</span></div>";
     }).join("");
     return '<section class="abschnitt">' + (ct ? '<h2 class="thema-titel">' + esc(ct.name[state.lang] || ct.name.de) + "</h2>" +
@@ -762,7 +811,9 @@
   function renderHints() {
     var hints = state.entries.filter(function (e) { return e.kind === "analysis" && e.data.scope === "hints"; })
       .sort(function (a, b) { return b.id - a.id; });
-    var knopf = hasKey() ? '<button type="button" class="knopf ki gross" data-act="ai-hints"' + (state.busy.hints ? " disabled" : "") + ">✦ " + esc(tr("ai_hints_btn")) + "</button>" : "";
+    var tn = curTopic() ? (curTopic().name[state.lang] || curTopic().name.de) : "";
+    var knopf = hasKey() ? '<button type="button" class="knopf ki gross" data-act="ai-hints"' + (state.busy.hints ? " disabled" : "") + ">✦ " + esc(tr("ai_hints_btn")) +
+      (tn ? ': <span class="knopf-thema">' + esc(tn) + "</span>" : "") + "</button>" : "";
     var neueste = hints.length ? analysisCard(hints[0], true) : (hasKey() && !state.busy.hints ? '<p class="hinweis">' + esc(tr("ai_hints_empty")) + "</p>" : "");
     var aeltere = hints.length > 1 ? '<details class="aeltere"><summary>' + esc(tr("ai_older")) + " (" + (hints.length - 1) + ")</summary>" +
       '<div class="liste">' + hints.slice(1).map(function (e) { return analysisCard(e, false); }).join("") + "</div></details>" : "";
@@ -775,7 +826,7 @@
     var hits = state.entries.filter(matches);
     if (!hits.length) return '<div class="leer">' + esc(tr("empty_search")) + "</div>";
     return '<div class="liste">' + hits.map(function (e) {
-      var titel = e.kind === "value" ? paramName(e.data) + ": " + fmtNum(e.data.value) + " " + (e.data.unit || "") + " (" + fmtDate(e.data.date) + ")" : L(e.data.title);
+      var titel = e.kind === "value" ? paramName(e.data) + ": " + fmtNum(e.data.value) + " " + (e.data.unit || "") + " (" + fmtDate(e.data.date) + ")" : e.kind === "medplan" ? planTitle(e.data) + " · " + planSchema(e.data) : L(e.data.title);
       var text = e.kind === "value" ? L(e.data.note) : L(e.data.body);
       return '<div class="karte"><div class="meta"><span class="chip">' + esc(tr("k_" + e.kind)) + "</span></div><h3>" + hl(titel) + "</h3>" +
         (text ? "<p>" + hl(text) + "</p>" : "") + filesHtml(e) + cardFoot(e) + "</div>";
@@ -904,17 +955,93 @@
     return aufklapp(e.id, txt(e.data.body), text.length > 200 || text.split("\n").length > 4);
   }
 
+  var FORMS = {
+    tablet: { de: "Tablette", en: "tablet", pl: "tabletka" }, capsule: { de: "Kapsel", en: "capsule", pl: "kapsułka" },
+    drops: { de: "Tropfen", en: "drops", pl: "krople" }, liquid: { de: "ml", en: "ml", pl: "ml" },
+    sachet: { de: "Beutel", en: "sachet", pl: "saszetka" }, injection: { de: "Spritze", en: "injection", pl: "zastrzyk" },
+    infusion: { de: "Infusion", en: "infusion", pl: "wlew" }, patch: { de: "Pflaster", en: "patch", pl: "plaster" },
+    cream: { de: "Creme/Salbe", en: "cream", pl: "krem/maść" }, spray: { de: "Hub/Spray", en: "puff/spray", pl: "dawka/spray" },
+    suppository: { de: "Zäpfchen", en: "suppository", pl: "czopek" }, other: { de: "Einheit", en: "unit", pl: "jednostka" }
+  };
+  var SLOTS = [["morning", "mp_m"], ["noon", "mp_mi"], ["evening", "mp_a"], ["night", "mp_n"]];
+  function amount(v) { var n = num(v); return n && !isNaN(n) && n > 0 ? n : 0; }
+  function planTitle(d) { return (d.name || "?") + (d.strength ? " " + d.strength : ""); }
+  function planSchema(d) { return SLOTS.map(function (s) { return fmtNum(amount(d[s[0]])).replace("–", "0"); }).join("-"); }
+  function perDay(d) { return SLOTS.reduce(function (t, s) { return t + amount(d[s[0]]); }, 0); }
+  function dailyDose(d) {
+    // Nur wenn die Stärke eine Zahl mit Einheit ist und täglich genommen wird: 20 mg × 2 = 40 mg
+    var m = String(d.strength || "").match(/^\s*([\d.,]+)\s*(mg|µg|mcg|g|ml|IE|I\.E\.|E|%|mmol)\b/i);
+    if (!m || d.frequency !== "daily" || !perDay(d)) return "";
+    return fmtNum(num(m[1]) * perDay(d)) + " " + m[2];
+  }
+  function stockInfo(d) {
+    var stock = num(d.stock), pd = perDay(d);
+    if (!stock || isNaN(stock) || d.frequency !== "daily" || !pd || !d.stock_date) return null;
+    var start = new Date(d.stock_date + "T12:00:00"), tage = Math.floor(stock / pd);
+    var bis = new Date(start.getTime() + tage * 86400000);
+    var rest = Math.round((bis.getTime() - Date.now()) / 86400000);
+    return { bis: bis.getFullYear() + "-" + ("0" + (bis.getMonth() + 1)).slice(-2) + "-" + ("0" + bis.getDate()).slice(-2), rest: rest };
+  }
+  function planRow(e) {
+    var d = e.data, si = stockInfo(d), dd = dailyDose(d);
+    var formName = (FORMS[d.form] || FORMS.other)[state.lang];
+    var cells = SLOTS.map(function (s) {
+      var v = amount(d[s[0]]);
+      return '<td class="mp-zahl' + (v ? "" : " leer") + '">' + (v ? fmtNum(v) : "–") + "</td>";
+    }).join("");
+    var lager = si ? '<span class="chip ' + (si.rest < 0 ? "rot" : si.rest <= 7 ? "warn" : "grau") + '">' +
+      esc(si.rest < 0 ? tr("mp_out") : si.rest <= 7 ? tr("mp_low") + " · " + fmtDate(si.bis) : tr("mp_lasts") + " " + fmtDate(si.bis)) + "</span>" : "";
+    var freq = d.frequency && d.frequency !== "daily" ? tr("mp_freq_" + d.frequency) : "";
+    if (state.confirm === e.id) {
+      return '<tr><td colspan="7"><span class="bestaetigen">' + esc(tr("del_q")) +
+        ' <button type="button" class="knopf klein gefahr" data-act="del-yes" data-id="' + e.id + '">' + esc(tr("yes_del")) + "</button>" +
+        ' <button type="button" class="knopf klein" data-act="del-no">' + esc(tr("cancel")) + "</button></span></td></tr>";
+    }
+    return "<tr><td class=\"mp-name\"><b>" + hl(d.name || "") + "</b>" + (d.strength ? " " + esc(d.strength) : "") +
+      '<div class="mp-klein">' + esc(formName) + (dd ? " · " + esc(tr("mp_daily")) + " " + esc(dd) : "") + (freq ? " · " + esc(freq) : "") +
+      (d.freq_note ? " (" + esc(d.freq_note) + ")" : "") + "</div></td>" + cells +
+      '<td class="mp-info">' + (L(d.notes) ? "<div>" + hl(L(d.notes)) + "</div>" : "") + (L(d.reason) ? '<div class="mp-klein">' + esc(tr("mp_reason")) + ": " + hl(L(d.reason)) + "</div>" : "") +
+      ((d.start || d.end || d.prescriber) ? '<div class="mp-klein">' + [d.start ? tr("mp_start") + " " + fmtDate(d.start) : "", d.end ? "– " + fmtDate(d.end) : "", d.prescriber ? esc(d.prescriber) : ""].filter(Boolean).join(" ") + "</div>" : "") +
+      lager + '</td><td class="mp-aktion">' +
+      '<button type="button" class="knopf klein" data-act="edit" data-id="' + e.id + '">' + esc(tr("edit")) + "</button> " +
+      '<button type="button" class="knopf klein gefahr" data-act="del" data-id="' + e.id + '" aria-label="' + esc(tr("del")) + '">×</button></td></tr>';
+  }
+  function planTable(list, titleKey) {
+    if (!list.length) return "";
+    return '<div class="mp-gruppe"><div class="eyebrow">' + esc(tr(titleKey)) + '</div><div class="mp-wrap"><table class="mp-tabelle"><thead><tr><th>' + esc(tr("mp_med")) + "</th>" +
+      SLOTS.map(function (s) { return '<th class="mp-zahl">' + esc(tr(s[1])) + "</th>"; }).join("") + "<th>" + esc(tr("mp_notes")) + "</th><th></th></tr></thead><tbody>" +
+      list.map(planRow).join("") + "</tbody></table></div></div>";
+  }
+  function renderPlan() {
+    var plan = byKind("medplan").sort(function (a, b) { return (a.data.name || "").localeCompare(b.data.name || "", state.lang); });
+    var aktiv = plan.filter(function (e) { return (e.data.status || "active") === "active"; });
+    var regel = aktiv.filter(function (e) { return e.data.frequency !== "asneeded"; });
+    var bedarf = aktiv.filter(function (e) { return e.data.frequency === "asneeded"; });
+    var inaktiv = plan.filter(function (e) { return (e.data.status || "active") !== "active"; });
+    var ct = curTopic();
+    return '<section class="abschnitt medplan" id="planDruck"><div class="abschnitt-kopf"><div><h2>' + esc(tr("mp_title")) + "</h2><p>" + esc(tr("mp_sub")) + "</p>" +
+      '<p class="nur-druck">' + esc(ct ? (ct.name[state.lang] || ct.name.de) : "") + " · " + esc(tr("mp_printed")) + " " + fmtDate(today()) + "</p></div>" +
+      '<div class="knoepfe">' + (plan.length ? '<button type="button" class="knopf" data-act="plan-print">⎙ ' + esc(tr("mp_print")) + "</button>" : "") +
+      '<button type="button" class="knopf primaer" data-act="new" data-kind="medplan">' + esc(tr("mp_add")) + "</button></div></div>" +
+      (aktiv.length ? planTable(regel, "mp_regular") + planTable(bedarf, "mp_asneeded")
+        : '<div class="leer">' + esc(tr("mp_empty")) + "</div>") +
+      (inaktiv.length ? '<details class="aeltere ohne-druck"' + (state.showInactive ? " open" : "") + '><summary>' + esc(tr("mp_inactive")) + " (" + inaktiv.length + ")</summary>" +
+        planTable(inaktiv, "mp_inactive") + "</details>" : "") + "</section>";
+  }
+
   function renderMeds() {
     var items = byKind("med").sort(function (a, b) { return L(a.data.title).localeCompare(L(b.data.title), state.lang); });
     var feld = function (key, val) { return L(val) ? '<div class="feld"><span class="eyebrow">' + esc(tr(key)) + "</span>" + txt(val) + "</div>" : ""; };
-    return '<section class="abschnitt"><div class="abschnitt-kopf"><h2>' + esc(tr("tab_med")) + "</h2>" +
+    return renderPlan() + '<section class="abschnitt"><div class="abschnitt-kopf"><h2>' + esc(tr("tab_med")) + "</h2>" +
       '<button type="button" class="knopf klein" data-act="gloss-all">' + esc(tr(state.glossAll ? "collapse_all" : "expand_all")) + "</button></div>" +
       aiInputRow("med", "ai_med_ph", "ai_med_btn") +
       (items.length ? '<div class="raster">' + items.map(function (e) {
         var d = e.data;
         return '<article class="karte"><h3>' + hl(L(d.title)) + "</h3>" + (L(d.cls) ? '<div class="meta"><span class="chip">' + hl(L(d.cls)) + "</span></div>" : "") +
           aufklapp(e.id, feld("f_how", d.body) + feld("f_side", d.side) + feld("f_notes", d.notes),
-            (L(d.body) + L(d.side) + L(d.notes)).length > 260, "hoch") + filesHtml(e) + cardFoot(e) + "</article>";
+            (L(d.body) + L(d.side) + L(d.notes)).length > 260, "hoch") + filesHtml(e) +
+          '<div class="karte-fuss links"><button type="button" class="knopf klein" data-act="plan-from-med" data-id="' + e.id + '">＋ ' + esc(tr("mp_add_card")) + "</button></div>" +
+          cardFoot(e) + "</article>";
       }).join("") + "</div>" : '<div class="leer">' + esc(tr("empty_search")) + "</div>") + "</section>";
   }
 
@@ -1606,7 +1733,37 @@
     state.editing = entry || null;
     var d = entry ? entry.data : {};
     var html = "";
-    if (kind === "video") {
+    if (kind === "medplan") {
+      var pf = state.planPrefill || {};
+      state.planPrefill = null;
+      var meds = state.entries.filter(function (x) { return x.kind === "med"; }).sort(function (a, b) { return L(a.data.title).localeCompare(L(b.data.title), state.lang); });
+      var medId = d.med_id || pf.med_id || "";
+      var medOpts = '<option value="">' + esc(tr("mp_other")) + "</option>" + meds.map(function (m) {
+        return '<option value="' + m.id + '"' + (String(medId) === String(m.id) ? " selected" : "") + ">" + esc(L(m.data.title)) + "</option>";
+      }).join("");
+      var nm = d.name || pf.name || "";
+      var opt = function (key, val, cur) { return '<option value="' + val + '"' + (cur === val ? " selected" : "") + ">" + esc(tr(key)) + "</option>"; };
+      html = (meds.length ? "<label>" + esc(tr("mp_from_list")) + '<select id="fld-mpmed">' + medOpts + "</select></label>" : "") +
+        '<div class="reihe"><label>' + esc(tr("mp_name")) + inputHtml("mpname", "text", nm) + "</label>" +
+        "<label>" + esc(tr("mp_strength")) + '<input id="fld-mpstrength" type="text" placeholder="' + esc(tr("mp_strength_ph")) + '" value="' + esc(d.strength || "") + '"></label>' +
+        "<label>" + esc(tr("mp_form")) + '<select id="fld-mpform">' + Object.keys(FORMS).map(function (k) {
+          return '<option value="' + k + '"' + ((d.form || "tablet") === k ? " selected" : "") + ">" + esc(FORMS[k][state.lang]) + "</option>";
+        }).join("") + "</select></label></div>" +
+        '<fieldset class="auswahl"><legend>' + esc(tr("mp_schema")) + '</legend><div class="mp-schema">' + SLOTS.map(function (sl) {
+          var v = amount(d[sl[0]]);
+          return "<label>" + esc(tr(sl[1])) + '<input id="fld-mp-' + sl[0] + '" type="text" inputmode="decimal" placeholder="0" value="' + (v ? fmtNum(v) : "") + '"></label>';
+        }).join("") + '</div><span class="hinweis">' + esc(tr("mp_schema_hint")) + "</span></fieldset>" +
+        '<div class="reihe"><label>' + esc(tr("mp_freq")) + '<select id="fld-mpfreq">' + opt("mp_freq_daily", "daily", d.frequency || "daily") +
+        opt("mp_freq_custom", "custom", d.frequency) + opt("mp_freq_asneeded", "asneeded", d.frequency) + opt("mp_freq_once", "once", d.frequency) + "</select></label>" +
+        "<label>" + esc(tr("mp_freq_note")) + '<input id="fld-mpfreqnote" type="text" placeholder="' + esc(tr("mp_freq_note_ph")) + '" value="' + esc(d.freq_note || "") + '"></label></div>' +
+        '<div class="reihe"><label>' + esc(tr("mp_start")) + inputHtml("mpstart", "date", d.start || (entry ? "" : today())) + "</label>" +
+        "<label>" + esc(tr("mp_end")) + inputHtml("mpend", "date", d.end || "") + "</label>" +
+        "<label>" + esc(tr("mp_status")) + '<select id="fld-mpstatus">' + opt("mp_active", "active", d.status || "active") + opt("mp_paused", "paused", d.status) + opt("mp_ended", "ended", d.status) + "</select></label></div>" +
+        "<label>" + esc(tr("mp_reason")) + inputHtml("reason", "text", L(d.reason) || pf.reason || "") + "</label>" +
+        "<label>" + esc(tr("mp_notes")) + '<input id="fld-notes" type="text" placeholder="' + esc(tr("mp_notes_ph")) + '" value="' + esc(L(d.notes)) + '"></label>' +
+        '<div class="reihe"><label>' + esc(tr("mp_prescriber")) + inputHtml("mpprescriber", "text", d.prescriber || "") + "</label>" +
+        "<label>" + esc(tr("mp_stock")) + '<input id="fld-mpstock" type="text" inputmode="decimal" value="' + esc(d.stock != null && d.stock !== "" ? fmtNum(d.stock) : "") + '"><span class="hinweis">' + esc(tr("mp_stock_hint")) + "</span></label></div>";
+    } else if (kind === "video") {
       state.preview = entry ? { yt_id: d.yt_id, thumb: d.thumb, url: d.url } : null;
       var catOpts = cats().map(function (c) {
         return '<option value="' + c.key + '"' + ((d.category || (entry ? "sonstiges" : (isHealth() ? "befund" : "grundlagen"))) === c.key ? " selected" : "") + ">" + esc(c.n[state.lang]) + "</option>";
@@ -1720,7 +1877,32 @@
       if (changed && text.trim()) texts[name] = text;
     };
 
-    if (kind === "video") {
+    if (kind === "medplan") {
+      var mid = $("fld-mpmed") ? $("fld-mpmed").value : "";
+      var nameV = val("mpname").trim();
+      if (!nameV && mid) {
+        var mm = state.entries.filter(function (x) { return String(x.id) === mid; })[0];
+        nameV = mm ? L(mm.data.title).replace(/\s*\(.*\)\s*$/, "") : "";
+      }
+      if (!nameV) { $("formStatus").textContent = tr("mp_need_name"); return; }
+      data.med_id = mid ? Number(mid) : null;
+      data.name = nameV;
+      data.strength = val("mpstrength").trim();
+      data.form = $("fld-mpform").value;
+      SLOTS.forEach(function (sl) { var v = num(val("mp-" + sl[0])); data[sl[0]] = v && !isNaN(v) && v > 0 ? v : 0; });
+      data.frequency = $("fld-mpfreq").value;
+      data.freq_note = val("mpfreqnote").trim();
+      data.start = val("mpstart");
+      data.end = val("mpend");
+      data.status = $("fld-mpstatus").value;
+      data.prescriber = val("mpprescriber").trim();
+      var st = num(val("mpstock"));
+      var stNeu = st && !isNaN(st) && st > 0 ? st : null;
+      if (stNeu !== (old.stock == null ? null : old.stock)) data.stock_date = today();
+      data.stock = stNeu;
+      setI18n("reason", val("reason").trim());
+      setI18n("notes", val("notes").trim());
+    } else if (kind === "video") {
       var url = val("url").trim();
       if (!url) { $("formStatus").textContent = tr("err_url"); return; }
       if (!/^https?:\/\//i.test(url)) url = "https://" + url;
@@ -1861,6 +2043,16 @@
       render(); return;
     }
     if (act === "gloss-all") { state.glossAll = !state.glossAll; state.openGloss = {}; render(); return; }
+    if (act === "plan-from-med" && entry) {
+      state.planPrefill = { med_id: entry.id, name: L(entry.data.title).replace(/\s*\(.*\)\s*$/, "") };
+      openForm("medplan");
+      return;
+    }
+    if (act === "plan-print") {
+      document.body.classList.add("drucke-plan");
+      setTimeout(function () { window.print(); document.body.classList.remove("drucke-plan"); }, 50);
+      return;
+    }
     if (act === "x-close") { state.explain = null; renderExplain(); return; }
     if (act === "x-save") {
       var xd = state.explain;
@@ -2099,6 +2291,11 @@
     setTimeout(function () { loadPreview(); }, 30);
   });
   $("formFelder").addEventListener("change", function (ev) {
+    if (ev.target.id === "fld-mpmed") {
+      var m = state.entries.filter(function (x) { return String(x.id) === ev.target.value; })[0];
+      if (m) $("fld-mpname").value = L(m.data.title).replace(/\s*\(.*\)\s*$/, "");
+      return;
+    }
     if (ev.target.id === "fld-url" && !(state.preview && state.preview.url === ev.target.value.trim())) { loadPreview(); return; }
     if (ev.target.id === "fld-files") { addPending(ev.target.files); ev.target.value = ""; return; }
     if (ev.target.id !== "fld-param") return;

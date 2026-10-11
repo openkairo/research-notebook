@@ -33,7 +33,7 @@ PUBLIC_URL = os.environ.get("PUBLIC_URL", "").rstrip("/")
 # Beispielinhalte (Thema „Brustgesundheit“ mit Begriffen, Medikamenten, Quellen) nur auf Wunsch bei leerer Datenbank.
 EXAMPLE_DATA = os.environ.get("EXAMPLE_DATA", "").lower() in ("1", "true", "yes", "ja")
 LANGS = ("de", "en", "pl")
-KINDS = ("finding", "value", "glossary", "med", "research", "analysis", "video", "study")
+KINDS = ("finding", "value", "glossary", "med", "research", "analysis", "video", "study", "medplan")
 THUMBS = DB.parent / "thumbs"
 FILES = DB.parent / "files"
 MAX_BYTES = 30 * 1024 * 1024
@@ -654,6 +654,44 @@ def openai_json(auftrag, antwort_schema, *, schnell=False, web=False, dateien=No
     return out
 
 
+FORMEN = {"tablet": "Tablette", "capsule": "Kapsel", "drops": "Tropfen", "liquid": "ml Saft/Lösung", "sachet": "Beutel",
+          "injection": "Spritze", "infusion": "Infusion", "patch": "Pflaster", "cream": "Creme/Salbe", "spray": "Hub/Spray",
+          "suppository": "Zäpfchen", "other": "Einheit"}
+HAEUFIGKEIT = {"daily": "täglich", "custom": "nach Rhythmus", "asneeded": "bei Bedarf", "once": "einmalig/Zyklus"}
+
+
+def _menge(x):
+    try:
+        v = float(str(x).replace(",", "."))
+    except (TypeError, ValueError):
+        return 0.0
+    return v if v > 0 else 0.0
+
+
+def plan_zeile(d):
+    """Eine Planzeile in der Schreibweise eines Medikationsplans: Name Stärke, 1-0-1-0 Tablette, täglich …"""
+    def zahl(v):
+        v = _menge(v)
+        return ("%g" % v).replace(".", ",") if v else "0"
+    schema_ = "-".join(zahl(d.get(k)) for k in ("morning", "noon", "evening", "night"))
+    def de(v):
+        return v.get("de") or next((x for x in v.values() if x), "") if isinstance(v, dict) else (v or "")
+    teile = [f"{d.get('name', '?')} {d.get('strength', '')}".strip(),
+             f"{schema_} {FORMEN.get(d.get('form'), d.get('form') or '')}".strip(),
+             HAEUFIGKEIT.get(d.get("frequency"), d.get("frequency") or "") + (f" ({d['freq_note']})" if d.get("freq_note") else "")]
+    if d.get("start") or d.get("end"):
+        teile.append(f"seit {d.get('start') or '?'}" + (f" bis {d['end']}" if d.get("end") else ""))
+    if de(d.get("reason")):
+        teile.append("Grund: " + de(d.get("reason")))
+    if de(d.get("notes")):
+        teile.append("Hinweis: " + de(d.get("notes")))
+    if d.get("prescriber"):
+        teile.append("verordnet von " + d["prescriber"])
+    if d.get("stock"):
+        teile.append(f"Vorrat {('%g' % _menge(d['stock'])).replace('.', ',')} Einheiten (Stand {d.get('stock_date') or '?'})")
+    return " · ".join(t for t in teile if t)
+
+
 def kontext(details=True):
     """Die Mappe als knapper Text für die KI: Werte, Befunde, eigene Medikamenten-Notizen, Recherche-Titel."""
     with db() as con:
@@ -680,6 +718,15 @@ def kontext(details=True):
                 teile.append(de(d.get("body"))[:3000])
             if details and d.get("ai"):
                 teile.append("Frühere KI-Einordnung: " + de(d["ai"].get("text"))[:1500])
+    plan = [e for e in rows if e["kind"] == "medplan"]
+    if plan:
+        aktiv = [e for e in plan if e["data"].get("status", "active") == "active"]
+        rest = [e for e in plan if e["data"].get("status", "active") != "active"]
+        teile.append("\n## Medikamentenplan — tatsächlich eingenommen (Schema Morgens-Mittags-Abends-Nachts)")
+        teile += [f"- {plan_zeile(e['data'])}" for e in aktiv] or ["- (keine aktiven Einträge)"]
+        if rest:
+            teile.append("Pausiert oder beendet:")
+            teile += [f"- [{'pausiert' if e['data'].get('status') == 'paused' else 'beendet'}] {plan_zeile(e['data'])}" for e in rest]
     meds = [e for e in rows if e["kind"] == "med" and de(e["data"].get("notes"))]
     if meds:
         teile.append("\n## Medikamente mit eigenen Notizen (vermutlich aktuelle oder geplante Therapie)")
@@ -999,6 +1046,9 @@ def ki_hinweise(s: Sprache):
         "Gliedere: '## Wo wir stehen' (Lage in 3–5 Sätzen, soweit aus der Mappe ableitbar), '## Was als Nächstes "
         "üblich ist' (laut Leitlinie, als Orientierung), '## Was im Notizbuch noch fehlt' (Werte, Untersuchungen, "
         "Unterlagen oder offene Entscheidungen, die für genau dieses Thema typischerweise wichtig sind), "
+        "'## Medikamentenplan' (nur wenn einer hinterlegt ist: Wechselwirkungen zwischen den Medikamenten und mit "
+        "Nahrungsergänzung, Einnahmezeitpunkte und Abstände, Doppelungen, Dosis im üblichen Rahmen?, passende Laborkontrollen "
+        "zu den Werten im Notizbuch, Vorrat — alles als Einschätzung, nie eigenmächtig ändern), "
         "'## Fragen fürs nächste Arztgespräch', '## Alltag' (konkrete, belegte Tipps zum Thema), '## Warnzeichen' "
         "(nur solche, die zu diesem Thema passen). Ist das Notizbuch noch leer, erkläre, womit man bei diesem Thema "
         "sinnvoll anfängt. " + f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
@@ -1596,7 +1646,7 @@ import secrets
 
 MCP_PROTOKOLL = "2025-06-18"
 ARTEN = {"finding": "Befund", "value": "Messwert", "glossary": "Begriff", "med": "Medikament",
-         "research": "Recherche-Notiz", "analysis": "KI-Analyse", "video": "Video/Link", "study": "Studie"}
+         "research": "Recherche-Notiz", "analysis": "KI-Analyse", "video": "Video/Link", "study": "Studie", "medplan": "Medikamentenplan"}
 
 
 def mcp_schluessel():
@@ -1660,6 +1710,8 @@ def _t(v, lang):
 
 def _titel(e, lang="de"):
     d = e["data"]
+    if e["kind"] == "medplan":
+        return plan_zeile(d)
     if e["kind"] == "value":
         name = d.get("paramLabel") or PARAM_NAMEN.get(d.get("param"), d.get("param"))
         return f"{name}: {d.get('value')} {d.get('unit', '')} ({d.get('date', '')})"
@@ -1720,6 +1772,19 @@ MCP_TOOLS = [
     {"name": "studie_uebernehmen", "schreibt": True,
      "description": "Übernimmt eine Studie per PubMed-ID, NCT-Nummer, DOI oder Link ins Notizbuch (mit Abstract, Eckdaten, bei laufenden Studien Einschlusskriterien und Orten in DE/PL). Danach optional ki_einordnung_starten.",
      "inputSchema": {"type": "object", "properties": {"thema": MCP_THEMA, "kennung": {"type": "string", "description": "PMID, NCT…, DOI oder URL"}}, "required": ["kennung"]}},
+    {"name": "medikamentenplan", "schreibt": False,
+     "description": "Der Medikamentenplan eines Themas — was tatsächlich eingenommen wird: Name, Stärke, Schema Morgens-Mittags-Abends-Nachts, Form, Häufigkeit, Zeitraum, Grund, Hinweise, Vorrat. Mit pausierten und beendeten Einträgen.",
+     "inputSchema": {"type": "object", "properties": {"thema": MCP_THEMA, "nur_aktive": {"type": "boolean"}}}},
+    {"name": "plan_eintrag_setzen", "schreibt": True,
+     "description": "Legt einen Eintrag im Medikamentenplan an oder ändert ihn (mit id). Mengen je Einnahmezeit als Zahl (0,5 = halbe Tablette). Nur auf ausdrückliche Anweisung eines Menschen — der Plan bildet die echte Einnahme ab.",
+     "inputSchema": {"type": "object", "properties": {"thema": MCP_THEMA, "id": {"type": "integer", "description": "Nur zum Ändern"},
+                                                      "name": {"type": "string"}, "staerke": {"type": "string", "description": "z. B. 20 mg"},
+                                                      "form": {"type": "string", "enum": list(FORMEN)}, "morgens": {"type": "number"}, "mittags": {"type": "number"},
+                                                      "abends": {"type": "number"}, "nachts": {"type": "number"},
+                                                      "haeufigkeit": {"type": "string", "enum": list(HAEUFIGKEIT)}, "rhythmus": {"type": "string"},
+                                                      "start": {"type": "string"}, "ende": {"type": "string"}, "status": {"type": "string", "enum": ["active", "paused", "ended"]},
+                                                      "grund": {"type": "string"}, "hinweise": {"type": "string"}, "verordnet_von": {"type": "string"},
+                                                      "vorrat": {"type": "number", "description": "Anzahl Einheiten"}, "sprache": MCP_SPRACHE}}},
     {"name": "notebook_ueberblick", "schreibt": False,
      "description": "Überblick über das Research Notebook: Anzahl der Einträge je Art, die neuesten Messwerte (mit Markierung außerhalb des Referenzbereichs), die letzten Befunde und die jüngsten KI-Hinweise. Guter Einstieg.",
      "inputSchema": {"type": "object", "properties": {"thema": MCP_THEMA, "sprache": MCP_SPRACHE}}},
@@ -1834,7 +1899,8 @@ def mcp_tool(name, a, recht):
         tid = thema_setzen(a["thema"])["id"]
     else:
         thema_setzen(None)
-    if name in ("eintrag_anlegen", "studie_uebernehmen") and tid is None and len(alle_themen) > 1:
+    braucht_thema = name in ("eintrag_anlegen", "studie_uebernehmen") or (name == "plan_eintrag_setzen" and not a.get("id"))
+    if braucht_thema and tid is None and len(alle_themen) > 1:
         return {"fehler": "Bitte thema angeben — es gibt mehrere Themen.", "themen": [{"id": t["id"], "name": t["name"].get(lang)} for t in alle_themen]}
 
     if name == "themen_auflisten":
@@ -1943,6 +2009,39 @@ def mcp_tool(name, a, recht):
                                  {"type": "image", "data": b64, "mimeType": f["mime"]}]}
         return {"_content": [{"type": "text", "text": f"Datei {f['name']} ({f['size']} Bytes)"},
                              {"type": "resource", "resource": {"uri": f"notebook://dateien/{f['id']}", "mimeType": f["mime"], "blob": b64}}]}
+
+    if name == "medikamentenplan":
+        if tid is None:
+            tid = thema()["id"]
+        plan = [e for e in _alle(tid) if e["kind"] == "medplan"]
+        if a.get("nur_aktive"):
+            plan = [e for e in plan if e["data"].get("status", "active") == "active"]
+        return {"thema": thema_name(lang), "eintraege": [{"id": e["id"], "zeile": plan_zeile(e["data"]),
+                                                          "status": e["data"].get("status", "active"), "daten": e["data"]} for e in plan]}
+
+    if name == "plan_eintrag_setzen":
+        felder = {"name": "name", "staerke": "strength", "form": "form", "morgens": "morning", "mittags": "noon", "abends": "evening",
+                  "nachts": "night", "haeufigkeit": "frequency", "rhythmus": "freq_note", "start": "start", "ende": "end",
+                  "status": "status", "verordnet_von": "prescriber", "vorrat": "stock"}
+        if a.get("id"):
+            with db() as con:
+                r = con.execute("SELECT * FROM entries WHERE id=? AND kind='medplan'", (int(a["id"]),)).fetchone()
+            if not r:
+                return {"fehler": "Planeintrag nicht gefunden"}
+            data = json.loads(r["data"])
+        else:
+            if not a.get("name"):
+                return {"fehler": "name fehlt."}
+            data = {"status": "active", "frequency": "daily", "form": "tablet", "start": datetime.now().strftime("%Y-%m-%d")}
+        for ein, ziel in felder.items():
+            if a.get(ein) is not None:
+                data[ziel] = a[ein]
+        if a.get("vorrat") is not None:
+            data["stock_date"] = datetime.now().strftime("%Y-%m-%d")
+        data.update(_i18n_aus({k: a[e] for e, k in (("grund", "reason"), ("hinweise", "notes")) if a.get(e)}, lang))
+        e = aendern(int(a["id"]), Entry(kind="medplan", data=data)) if a.get("id") else neu(Entry(kind="medplan", data=data, topic_id=thema()["id"]))
+        protokoll(f"MCP Medikamentenplan #{e['id']}")
+        return {"ok": True, "id": e["id"], "zeile": plan_zeile(e["data"])}
 
     if name == "studien_suchen":
         return studien_suche(a.get("query", ""), "trials" if a.get("quelle") == "trials" else "pubmed", a.get("land", ""),
