@@ -406,6 +406,19 @@
     bp_need: { de: "Bitte systolischen und diastolischen Wert als Zahl eingeben.", en: "Please enter systolic and diastolic values as numbers.", pl: "Wpisz wartości skurczowe i rozkurczowe jako liczby." },
     hist_close: { de: "Verlauf einklappen", en: "Collapse history", pl: "Zwiń przebieg" },
     bp_less: { de: "Nur die letzten 60", en: "Only the last 60", pl: "Tylko ostatnie 60" },
+    ch_open: { de: "📈 Diagramm", en: "📈 Chart", pl: "📈 Wykres" },
+    ch_close: { de: "Diagramm ausblenden", en: "Hide chart", pl: "Ukryj wykres" },
+    ch_30: { de: "30 Tage", en: "30 days", pl: "30 dni" },
+    ch_90: { de: "90 Tage", en: "90 days", pl: "90 dni" },
+    ch_365: { de: "1 Jahr", en: "1 year", pl: "1 rok" },
+    ch_all: { de: "Alle", en: "All", pl: "Wszystko" },
+    ch_avg: { de: "Ø 7 Tage", en: "7-day avg", pl: "Ø 7 dni" },
+    ch_single: { de: "Einzelmessungen", en: "single readings", pl: "pojedyncze pomiary" },
+    ch_ref: { de: "Normbereich", en: "reference range", pl: "zakres normy" },
+    ch_limit: { de: "Grenze", en: "limit", pl: "granica" },
+    ch_none: { de: "Keine Messungen in diesem Zeitraum.", en: "No readings in this period.", pl: "Brak pomiarów w tym okresie." },
+    ch_all_open: { de: "📈 Alle Diagramme", en: "📈 All charts", pl: "📈 Wszystkie wykresy" },
+    ch_all_close: { de: "Diagramme ausblenden", en: "Hide charts", pl: "Ukryj wykresy" },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -487,7 +500,7 @@
 
   var state = { lang: "de", tab: "home", entries: [], query: "", tag: "", confirm: null, editing: null, editKind: null, pending: [],
     settings: null, models: null, busy: {}, drafts: {}, aiIn: { web: true, mappe: false }, aiErr: {}, confirmKey: false, st: { q: "", source: "pubmed", land: "", open: true, recent: false, results: null, total: 0, imp: "" }, vCat: "", vLang: "", preview: null,
-    chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, planPrefill: null, showInactive: false, bpAll: false, mcp: null, mcpShow: {}, mcpConfirm: null,
+    chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, planPrefill: null, showInactive: false, bpAll: false, charts: {}, chartRange: {}, chartsAll: false, mcp: null, mcpShow: {}, mcpConfirm: null,
     topics: null, topic: null, topicConfirm: false, topicQuery: "" };
   var OK_EXT = /\.(pdf|jpe?g|png|heic|heif|webp|csv)$/i;
   var MAX_BYTES = 30 * 1024 * 1024;
@@ -987,6 +1000,149 @@
   function histFuss(key, extra) {
     return '<div class="verlauf-fuss"><button type="button" class="mehr-knopf" data-act="hist-close" data-param="' + esc(key) + '">▴ ' + esc(tr("hist_close")) + "</button>" + (extra || "") + "</div>";
   }
+  // ---------- Diagramme ----------
+  // Ein Diagramm = eine Achse (nie zwei Skalen). Viele Messungen: blasse Einzelpunkte + 7-Tage-Mittel als Linie.
+  var CHARTS = {};
+  function zeitMs(d) { return new Date((d.date || "1970-01-01") + "T" + (d.time || "12:00") + ":00").getTime(); }
+  function niceTicks(lo, hi, n) {
+    var span = hi - lo || 1, step = Math.pow(10, Math.floor(Math.log(span / n) / Math.LN10)), err = span / n / step;
+    if (err >= 7.5) step *= 10; else if (err >= 3.5) step *= 5; else if (err >= 1.5) step *= 2;
+    var out = [];
+    for (var v = Math.ceil(lo / step) * step; v <= hi + step * 0.001; v += step) out.push(Math.round(v * 1e6) / 1e6);
+    return out;
+  }
+  function mittel7(pts) {
+    var out = [], i0 = 0, sum = 0;
+    for (var i = 0; i < pts.length; i++) {
+      sum += pts[i].v;
+      while (pts[i].t - pts[i0].t > 7 * 86400000) { sum -= pts[i0].v; i0++; }
+      out.push({ t: pts[i].t, v: sum / (i - i0 + 1) });
+    }
+    return out;
+  }
+  function chartRangeDefault(spanTage) { return spanTage > 120 ? "90" : "all"; }
+  // series: [{name, cls, pts:[{t,v,d,time}]}]; opts: {unit, low, high, limits:[{v, label}]}
+  function chartHtml(cid, series, opts) {
+    var alleT = [];
+    series.forEach(function (s) { s.pts.forEach(function (p) { alleT.push(p.t); }); });
+    if (!alleT.length) return "";
+    var tMax = Math.max.apply(null, alleT), tMin0 = Math.min.apply(null, alleT);
+    var spanTage = (tMax - tMin0) / 86400000;
+    var range = state.chartRange[cid] || chartRangeDefault(spanTage);
+    var tMin = range === "all" ? tMin0 : tMax - Number(range) * 86400000;
+    var sichtbar = series.map(function (s) { return { name: s.name, cls: s.cls, pts: s.pts.filter(function (p) { return p.t >= tMin; }) }; });
+    var knoepfe = '<div class="ch-zeit" role="group">' + ["30", "90", "365", "all"].map(function (r) {
+      return '<button type="button" data-act="ch-range" data-cid="' + cid + '" data-r="' + r + '"' + (range === r ? ' aria-pressed="true"' : "") + ">" + esc(tr("ch_" + r)) + "</button>";
+    }).join("") + "</div>";
+    var n = sichtbar.reduce(function (a, s) { return Math.max(a, s.pts.length); }, 0);
+    if (!n) return knoepfe + '<p class="hinweis">' + esc(tr("ch_none")) + "</p>";
+    var viele = n > 40;
+    var W = 720, H = 240, L = 46, R = 58, T = 12, B = 26;
+    if (range === "all" || tMin < tMin0) tMin = Math.min.apply(null, sichtbar.map(function (s) { return s.pts.length ? s.pts[0].t : tMax; }));
+    var t0 = tMin, t1 = tMax;
+    if (t1 - t0 < 86400000) { t0 -= 43200000; t1 += 43200000; }
+    var vals = [];
+    sichtbar.forEach(function (s) { s.pts.forEach(function (p) { vals.push(p.v); }); });
+    (opts.limits || []).forEach(function (l) { vals.push(l.v); });
+    if (opts.low != null) vals.push(opts.low);
+    if (opts.high != null) vals.push(opts.high);
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = (hi - lo) * 0.08 || Math.abs(hi) * 0.1 || 1;
+    lo -= pad; hi += pad;
+    var ticks = niceTicks(lo, hi, 4);
+    lo = Math.min(lo, ticks[0]); hi = Math.max(hi, ticks[ticks.length - 1]);
+    var x = function (t) { return L + (t - t0) / (t1 - t0) * (W - L - R); };
+    var y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
+    var g = "";
+    // Gitter + y-Achse
+    ticks.forEach(function (v) {
+      g += '<line class="ch-gitter" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) + '"/>' +
+        '<text class="ch-achse" x="' + (L - 6) + '" y="' + (y(v) + 4).toFixed(1) + '" text-anchor="end">' + fmtNum(v) + "</text>";
+    });
+    // x-Achse: 4–6 Datumsmarken
+    var xt = 5, mehrJahre = new Date(t0).getFullYear() !== new Date(t1).getFullYear();
+    for (var i = 0; i <= xt; i++) {
+      var tt = t0 + (t1 - t0) * i / xt, dd = new Date(tt);
+      var lab = ("0" + dd.getDate()).slice(-2) + "." + ("0" + (dd.getMonth() + 1)).slice(-2) + "." + (mehrJahre ? String(dd.getFullYear()).slice(-2) : "");
+      g += '<text class="ch-achse" x="' + x(tt).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="' + (i === 0 ? "start" : i === xt ? "end" : "middle") + '">' + lab.replace(/\.$/, "") + "</text>";
+    }
+    // Normbereich als Band, Grenzen als gestrichelte Linien
+    if (opts.low != null || opts.high != null) {
+      var yTop = y(opts.high != null ? opts.high : hi), yBot = y(opts.low != null ? opts.low : lo);
+      g += '<rect class="ch-band" x="' + L + '" y="' + yTop.toFixed(1) + '" width="' + (W - L - R) + '" height="' + Math.max(1, yBot - yTop).toFixed(1) + '"/>';
+    }
+    (opts.limits || []).forEach(function (l) {
+      g += '<line class="ch-grenze" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(l.v).toFixed(1) + '" y2="' + y(l.v).toFixed(1) + '"/>' +
+        '<text class="ch-achse ch-grenztext" x="' + (L + 4) + '" y="' + (y(l.v) - 4).toFixed(1) + '">' + esc(tr("ch_limit")) + " " + esc(l.label) + "</text>";
+    });
+    // Reihen
+    sichtbar.forEach(function (s) {
+      if (!s.pts.length) return;
+      var pfad = function (pts) { return pts.map(function (p, j) { return (j ? "L" : "M") + x(p.t).toFixed(1) + "," + y(p.v).toFixed(1); }).join(""); };
+      if (viele) {
+        g += s.pts.map(function (p) { return '<circle class="ch-punkt ' + s.cls + '" cx="' + x(p.t).toFixed(1) + '" cy="' + y(p.v).toFixed(1) + '" r="2"/>'; }).join("");
+        var m = mittel7(s.pts);
+        g += '<path class="ch-linie ' + s.cls + '" d="' + pfad(m) + '"/>';
+        var lm = m[m.length - 1];
+        g += '<text class="ch-endwert" x="' + (W - R + 4) + '" y="' + (y(lm.v) + 4).toFixed(1) + '">' + fmtNum(Math.round(lm.v)) + "</text>";
+      } else {
+        g += '<path class="ch-linie ' + s.cls + '" d="' + pfad(s.pts) + '"/>' +
+          s.pts.map(function (p) { return '<circle class="ch-marke ' + s.cls + '" cx="' + x(p.t).toFixed(1) + '" cy="' + y(p.v).toFixed(1) + '" r="3.5"/>'; }).join("");
+        var lp = s.pts[s.pts.length - 1];
+        g += '<text class="ch-endwert" x="' + (W - R + 4) + '" y="' + (y(lp.v) + 4).toFixed(1) + '">' + fmtNum(lp.v) + "</text>";
+      }
+    });
+    CHARTS[cid] = { series: sichtbar, x: x, y: y, t0: t0, t1: t1, L: L, R: R, W: W, H: H, T: T, B: B, unit: opts.unit || "" };
+    var legende = '<div class="ch-legende">' + (sichtbar.length > 1 ? sichtbar.map(function (s) {
+      return '<span><i class="ch-farbe ' + s.cls + '"></i>' + esc(s.name) + "</span>";
+    }).join("") : "") + (viele ? '<span><i class="ch-farbe linie"></i>' + esc(tr("ch_avg")) + '</span><span><i class="ch-farbe punkt"></i>' + esc(tr("ch_single")) + "</span>" : "") +
+      (opts.low != null || opts.high != null ? '<span><i class="ch-farbe band"></i>' + esc(tr("ch_ref")) + "</span>" : "") +
+      ((opts.limits || []).length ? '<span><i class="ch-farbe grenze"></i>' + esc(tr("ch_limit")) + "</span>" : "") + "</div>";
+    return knoepfe + legende + '<div class="ch-rahmen" data-cid="' + cid + '"><svg class="ch-svg" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(series.map(function (s) { return s.name; }).join(", ")) + '">' + g +
+      '<line class="ch-kreuz" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '" hidden/><g class="ch-hover"></g>' +
+      '<rect class="ch-flaeche" x="' + L + '" y="' + T + '" width="' + (W - L - R) + '" height="' + (H - T - B) + '"/></svg><div class="ch-tipp" hidden></div></div>';
+  }
+  function chartHover(rahmen, clientX) {
+    var c = CHARTS[rahmen.getAttribute("data-cid")];
+    if (!c) return;
+    var svg = rahmen.querySelector("svg"), box = svg.getBoundingClientRect();
+    var sx = (clientX - box.left) / box.width * c.W;
+    if (sx < c.L || sx > c.W - c.R) { chartLeave(rahmen); return; }
+    var t = c.t0 + (sx - c.L) / (c.W - c.L - c.R) * (c.t1 - c.t0);
+    // nächste Messung über alle Reihen, dann alle Reihen zu genau diesem Zeitpunkt
+    var best = null;
+    c.series.forEach(function (s) { s.pts.forEach(function (p) { if (!best || Math.abs(p.t - t) < Math.abs(best.t - t)) best = p; }); });
+    if (!best) return;
+    var zeile = c.series.map(function (s) {
+      var p = s.pts.filter(function (q) { return q.t === best.t; })[0];
+      return p ? { s: s, p: p } : null;
+    }).filter(Boolean);
+    var kreuz = svg.querySelector(".ch-kreuz"), hov = svg.querySelector(".ch-hover");
+    kreuz.setAttribute("x1", c.x(best.t)); kreuz.setAttribute("x2", c.x(best.t)); kreuz.removeAttribute("hidden");
+    hov.innerHTML = zeile.map(function (z) { return '<circle class="ch-aktiv ' + z.s.cls + '" cx="' + c.x(z.p.t).toFixed(1) + '" cy="' + c.y(z.p.v).toFixed(1) + '" r="5"/>'; }).join("");
+    var tipp = rahmen.querySelector(".ch-tipp");
+    tipp.innerHTML = "<b>" + fmtDate(best.d) + (best.time ? " " + esc(best.time) : "") + "</b>" + zeile.map(function (z) {
+      return '<div><i class="ch-farbe ' + z.s.cls + '"></i>' + (c.series.length > 1 ? esc(z.s.name) + ": " : "") + "<b>" + fmtNum(z.p.v) + "</b> " + esc(c.unit) + "</div>";
+    }).join("");
+    tipp.hidden = false;
+    var px = c.x(best.t) / c.W * box.width;
+    tipp.style.left = Math.max(0, Math.min(box.width - tipp.offsetWidth, px - tipp.offsetWidth / 2)) + "px";
+  }
+  function chartLeave(rahmen) {
+    var svg = rahmen.querySelector("svg");
+    svg.querySelector(".ch-kreuz").setAttribute("hidden", "");
+    svg.querySelector(".ch-hover").innerHTML = "";
+    rahmen.querySelector(".ch-tipp").hidden = true;
+  }
+  function punkte(items) {
+    return items.map(function (e) { return { t: zeitMs(e.data), v: Number(e.data.value), d: e.data.date, time: e.data.time || "" }; })
+      .filter(function (p) { return !isNaN(p.v); }).sort(function (a, b) { return a.t - b.t; });
+  }
+  function diagrammKlappe(cid, inhalt) {
+    var offen = state.chartsAll || state.charts[cid];
+    return '<details class="diagramm" data-cid="' + cid + '"' + (offen ? " open" : "") + '><summary><span class="zu">' + esc(tr("ch_open")) + '</span><span class="auf">' + esc(tr("ch_close")) + "</span></summary>" +
+      (offen ? inhalt() : "") + "</details>";
+  }
+
   function bpCard(list) {
     var last = list[list.length - 1], s = last.sys.data, d = last.dia.data;
     // Ø der letzten 7 Tage bezogen auf die jüngste Messung
@@ -1014,6 +1170,16 @@
       '<div class="meta">' + fmtDate(last.date) + (last.time ? " " + esc(last.time) : "") + " · " + esc(tr("bp_avg7")) + " " + mittel(woche, "sys") + "/" + mittel(woche, "dia") +
       (s.high != null || d.high != null ? " · " + esc(tr("ref")) + " ≤ " + (s.high != null ? fmtNum(s.high) : "–") + "/" + (d.high != null ? fmtNum(d.high) : "–") : "") +
       " · " + list.length + " " + esc(tr("measurements")) + (ueber ? " · " + ueber + " " + esc(tr("bp_high_share")) : "") + "</div></div>" + bpSpark(list) +
+      diagrammKlappe("bp", function () {
+        var lim = [];
+        if (s.high != null) lim.push({ v: s.high, label: fmtNum(s.high) });
+        if (d.high != null) lim.push({ v: d.high, label: fmtNum(d.high) });
+        var pul = list.filter(function (m) { return m.pulse; }).map(function (m) { return m.pulse; });
+        return chartHtml("bp", [{ name: tr("bp_sys").replace(/\s*\(.*\)/, ""), cls: "s1", pts: punkte(list.map(function (m) { return m.sys; })) },
+          { name: tr("bp_dia").replace(/\s*\(.*\)/, ""), cls: "s2", pts: punkte(list.map(function (m) { return m.dia; })) }], { unit: "mmHg", limits: lim }) +
+          (pul.length ? '<div class="eyebrow ch-zweit">' + esc(tr("bp_pulse_col")) + "</div>" + chartHtml("bp-puls", [{ name: tr("bp_pulse_col"), cls: "s1", pts: punkte(pul) }],
+            { unit: "/min", low: pul[pul.length - 1].data.low, high: pul[pul.length - 1].data.high }) : "");
+      }) +
       '<details class="verlauf" data-param="bp"' + (open ? " open" : "") + "><summary>" + histSummary() + "</summary>" +
       '<div class="verlauf-scroll"><table><thead><tr><th>' + esc(tr("f_date")) + "</th><th>" + esc(tr("bp_value")) + "</th><th>" + esc(tr("bp_pulse_col")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
       rows + "</tbody></table></div>" +
@@ -1058,6 +1224,9 @@
         '<span class="hinweis">' + esc(last.unit || "") + "</span> " + flagHtml(flag(last.value, last.low, last.high)) + "</div>" +
         '<div class="meta">' + fmtDate(last.date) + (refText(last.low, last.high, last.unit) ? " · " + esc(refText(last.low, last.high, last.unit)) : "") +
         " · " + g.items.length + " " + esc(tr("measurements")) + "</div></div>" + spark(g.items) +
+        (g.items.length > 1 ? diagrammKlappe("p:" + g.key, function () {
+          return chartHtml("p:" + g.key, [{ name: g.name, cls: "s1", pts: punkte(g.items) }], { unit: last.unit || "", low: last.low, high: last.high });
+        }) : "") +
         '<details class="verlauf" data-param="' + esc(g.key) + '"' + (open ? " open" : "") + "><summary>" + histSummary() + "</summary>" +
         '<div class="verlauf-scroll"><table><thead><tr><th>' + esc(tr("f_date")) + "</th><th>" + esc(tr("f_value")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
         rows + "</tbody></table></div>" + histFuss(g.key) + "</details>" + '<div class="verlauf">' + aiBlock(g.items[g.items.length - 1]) + "</div></div>";
@@ -1066,6 +1235,7 @@
     var findings = byKind("finding").sort(function (a, b) { return (a.data.date || "") < (b.data.date || "") ? 1 : -1; });
     return '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("labs")) + "</h2><p>" + esc(tr("labs_sub")) + "</p></div>" +
       '<div class="knoepfe">' + (hasKey() && (groups.length || bpList.length) ? '<button type="button" class="knopf ki" data-act="ai-values"' + (state.busy.values ? " disabled" : "") + ">✦ " + esc(tr("ai_values_btn")) + "</button>" : "") +
+      ((groups.length || bpList.length) ? '<button type="button" class="knopf" data-act="ch-all">' + esc(tr(state.chartsAll ? "ch_all_close" : "ch_all_open")) + "</button>" : "") +
       '<button type="button" class="knopf" data-act="csv-open">' + esc(tr("csv_btn")) + "</button>" +
       (isHealth() || bpList.length ? '<button type="button" class="knopf" data-act="new" data-kind="bp">' + esc(tr("bp_new")) + "</button>" : "") +
       '<button type="button" class="knopf" data-act="new" data-kind="value">' + esc(tr("new_value")) + "</button></div></div>" + busyHtml("values") +
@@ -2405,6 +2575,8 @@
     if (act === "bp-del" && bpM) { state.confirm = "bp:" + bpk; render(); return; }
     if (act === "bp-all") { state.bpAll = true; render(); return; }
     if (act === "bp-less") { state.bpAll = false; render(); return; }
+    if (act === "ch-range") { state.chartRange[b.getAttribute("data-cid")] = b.getAttribute("data-r"); state.charts[b.getAttribute("data-cid")] = true; render(); return; }
+    if (act === "ch-all") { state.chartsAll = !state.chartsAll; state.charts = {}; render(); return; }
     if (act === "hist-close") {
       var pk = b.getAttribute("data-param");
       if (state.openParam === pk) state.openParam = null;
@@ -2550,6 +2722,12 @@
   });
   document.addEventListener("toggle", function (ev) {
     var d = ev.target;
+    if (d.classList && d.classList.contains("diagramm")) {
+      var cid = d.getAttribute("data-cid");
+      var war = !!(state.chartsAll || state.charts[cid]);
+      if (d.open !== war) { state.charts[cid] = d.open; if (!d.open) state.chartsAll = false; render(); }
+      return;
+    }
     if (d.classList && d.classList.contains("verlauf")) {
       if (d.open) state.openParam = d.getAttribute("data-param");
       else if (state.openParam === d.getAttribute("data-param")) state.openParam = null;
@@ -2560,6 +2738,26 @@
     openForm(map[state.tab]);
   });
   $("suche").addEventListener("input", function () { state.query = this.value; render(); });
+  // Diagramm-Hover: Maus und Finger
+  $("inhalt").addEventListener("mousemove", function (ev) {
+    var r = ev.target.closest && ev.target.closest(".ch-rahmen");
+    if (r) chartHover(r, ev.clientX);
+  });
+  $("inhalt").addEventListener("mouseleave", function () {
+    Array.prototype.forEach.call(document.querySelectorAll(".ch-rahmen"), chartLeave);
+  }, true);
+  $("inhalt").addEventListener("mouseout", function (ev) {
+    var r = ev.target.closest && ev.target.closest(".ch-rahmen");
+    if (r && !(ev.relatedTarget && r.contains(ev.relatedTarget))) chartLeave(r);
+  });
+  $("inhalt").addEventListener("touchmove", function (ev) {
+    var r = ev.target.closest && ev.target.closest(".ch-rahmen");
+    if (r && ev.touches[0]) chartHover(r, ev.touches[0].clientX);
+  }, { passive: true });
+  $("inhalt").addEventListener("touchstart", function (ev) {
+    var r = ev.target.closest && ev.target.closest(".ch-rahmen");
+    if (r && ev.touches[0]) chartHover(r, ev.touches[0].clientX);
+  }, { passive: true });
   $("themenSuche").addEventListener("input", function () { state.topicQuery = this.value; renderTopics(); });
   $("themenSuche").addEventListener("keydown", function (ev) {
     // Enter öffnet den ersten Treffer

@@ -2,6 +2,7 @@
 
 ## Unveröffentlicht
 
+- Diagramme für alle Messreihen: Zeit- und Werteachse, Normbereich als Band, Grenzen gestrichelt, Zeitraum 30 Tage / 90 Tage / 1 Jahr / alle, Wert-Anzeige beim Überfahren (auch per Finger); bei vielen Messungen 7-Tage-Mittel als Linie über den Einzelmessungen; Blutdruck systolisch/diastolisch gemeinsam, Puls eigenes Diagramm; „Alle Diagramme“ öffnet alle auf einmal; Farben für Farbenblindheit geprüft, eigene Töne im dunklen Modus
 - CSV-Import: Die KI entscheidet vor dem Import je Spalte, ob und wie gespeichert wird (Vorlage oder eigener Name, Einheit, zum Thema passender Normbereich) und begründet es; vorhandene Reihen haben Vorrang; funktioniert in jedem Thema
 - Doppelprüfung beim Import erkennt Blutdruck und Puls am Messwert, unabhängig vom gespeicherten Namen
 - Eingabe von Hand: „Anderer Wert“ schlägt die vorhandenen Reihen vor und übernimmt Einheit und Normbereich

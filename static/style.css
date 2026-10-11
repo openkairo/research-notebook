@@ -577,3 +577,43 @@ details.verlauf[open] > summary .auf { display: inline; }
 .verlauf-scroll table { margin: 0; }
 .verlauf-scroll thead th { position: sticky; top: 0; background: var(--flaeche); z-index: 1; }
 .verlauf-fuss { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+
+/* Diagramme — Reihenfarben geprüft (Farbenblindheit, Abstand, Kontrast) für hell und dunkel */
+:root { --serie-1: #8b2c5d; --serie-2: #4b5fb0; --ch-gitter: #ece4e9; --ch-achse: #7a6d7e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --serie-1: #d65e96; --serie-2: #6f8ff0; --ch-gitter: #352d3a; --ch-achse: #a99cab; } }
+:root[data-theme="dark"] { --serie-1: #d65e96; --serie-2: #6f8ff0; --ch-gitter: #352d3a; --ch-achse: #a99cab; }
+details.diagramm { grid-column: 1 / -1; }
+details.diagramm > summary { cursor: pointer; color: var(--akzent); font-size: 13px; margin-top: 6px; }
+details.diagramm > summary .auf { display: none; }
+details.diagramm[open] > summary .zu { display: none; }
+details.diagramm[open] > summary .auf { display: inline; }
+.ch-zeit { display: inline-flex; gap: 2px; border: 1px solid var(--linie); border-radius: 999px; padding: 2px; margin: 8px 0 4px; }
+.ch-zeit button { border: 0; background: none; border-radius: 999px; padding: 3px 10px; font-size: 12.5px; cursor: pointer; color: var(--leise); }
+.ch-zeit button[aria-pressed="true"] { background: var(--akzent-hell); color: var(--akzent); font-weight: 600; }
+.ch-legende { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--leise); margin: 2px 0 4px; }
+.ch-legende span { display: inline-flex; align-items: center; gap: 5px; }
+.ch-farbe { display: inline-block; width: 12px; height: 3px; border-radius: 2px; background: var(--leise); }
+.ch-farbe.s1 { background: var(--serie-1); } .ch-farbe.s2 { background: var(--serie-2); }
+.ch-farbe.punkt { width: 6px; height: 6px; border-radius: 50%; opacity: .5; }
+.ch-farbe.band { height: 10px; background: var(--band); }
+.ch-farbe.grenze { background: none; border-top: 2px dashed var(--schlecht); height: 0; }
+.ch-rahmen { position: relative; }
+.ch-svg { width: 100%; height: auto; display: block; overflow: visible; touch-action: pan-y; }
+.ch-gitter { stroke: var(--ch-gitter); stroke-width: 1; }
+.ch-achse { fill: var(--ch-achse); font: 11px var(--f-zahl); }
+.ch-grenztext { fill: var(--schlecht); }
+.ch-endwert { fill: var(--tinte); font: 600 12px var(--f-zahl); }
+.ch-band { fill: var(--band); }
+.ch-grenze { stroke: var(--schlecht); stroke-width: 1.2; stroke-dasharray: 4 4; opacity: .7; }
+.ch-linie { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ch-linie.s1 { stroke: var(--serie-1); } .ch-linie.s2 { stroke: var(--serie-2); }
+.ch-punkt { opacity: .35; } .ch-punkt.s1, .ch-marke.s1, .ch-aktiv.s1 { fill: var(--serie-1); } .ch-punkt.s2, .ch-marke.s2, .ch-aktiv.s2 { fill: var(--serie-2); }
+.ch-marke, .ch-aktiv { stroke: var(--flaeche); stroke-width: 2; }
+.ch-kreuz { stroke: var(--leise); stroke-width: 1; stroke-dasharray: 2 3; }
+.ch-flaeche { fill: transparent; cursor: crosshair; }
+.ch-tipp { position: absolute; top: 0; pointer-events: none; background: var(--flaeche); border: 1px solid var(--linie); border-radius: 8px;
+  padding: 6px 9px; font-size: 12.5px; box-shadow: 0 6px 18px rgba(20, 14, 22, .15); white-space: nowrap; z-index: 3; }
+.ch-tipp div { display: flex; align-items: center; gap: 6px; font-family: var(--f-zahl); }
+.ch-zweit { margin-top: 14px; }
+/* Die kleine Trendlinie in der Karte bleibt 150 px — das Diagramm nimmt die volle Breite */
+.param svg.ch-svg { width: 100%; height: auto; }
