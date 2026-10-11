@@ -345,6 +345,7 @@
     mp_freq_note: { de: "Rhythmus / Höchstmenge", en: "Rhythm / maximum", pl: "Rytm / maksimum" },
     mp_freq_note_ph: { de: "z. B. „Mo, Mi, Fr“, „alle 21 Tage“, „max. 3× täglich“", en: "e.g. “Mon, Wed, Fri”, “every 21 days”, “max. 3× daily”", pl: "np. „pn, śr, pt”, „co 21 dni”, „maks. 3× dziennie”" },
     mp_start: { de: "Seit", en: "Since", pl: "Od" },
+    mp_unknown: { de: "nicht bekannt", en: "unknown", pl: "nieznane" },
     mp_end: { de: "Bis (optional)", en: "Until (optional)", pl: "Do (opcjonalnie)" },
     mp_status: { de: "Status", en: "Status", pl: "Status" },
     mp_active: { de: "aktiv", en: "active", pl: "aktywny" },
@@ -1001,7 +1002,7 @@
       '<div class="mp-klein">' + esc(formName) + (dd ? " · " + esc(tr("mp_daily")) + " " + esc(dd) : "") + (freq ? " · " + esc(freq) : "") +
       (d.freq_note ? " (" + esc(d.freq_note) + ")" : "") + "</div></td>" + cells +
       '<td class="mp-info">' + (L(d.notes) ? "<div>" + hl(L(d.notes)) + "</div>" : "") + (L(d.reason) ? '<div class="mp-klein">' + esc(tr("mp_reason")) + ": " + hl(L(d.reason)) + "</div>" : "") +
-      ((d.start || d.end || d.prescriber) ? '<div class="mp-klein">' + [d.start ? tr("mp_start") + " " + fmtDate(d.start) : "", d.end ? "– " + fmtDate(d.end) : "", d.prescriber ? esc(d.prescriber) : ""].filter(Boolean).join(" ") + "</div>" : "") +
+      ((d.start || d.start_unknown || d.end || d.prescriber) ? '<div class="mp-klein">' + [d.start_unknown ? tr("mp_start") + ": " + tr("mp_unknown") : d.start ? tr("mp_start") + " " + fmtDate(d.start) : "", d.end ? "– " + fmtDate(d.end) : "", d.prescriber ? esc(d.prescriber) : ""].filter(Boolean).join(" ") + "</div>" : "") +
       lager + '</td><td class="mp-aktion">' +
       '<button type="button" class="knopf klein" data-act="edit" data-id="' + e.id + '">' + esc(tr("edit")) + "</button> " +
       '<button type="button" class="knopf klein gefahr" data-act="del" data-id="' + e.id + '" aria-label="' + esc(tr("del")) + '">×</button></td></tr>';
@@ -1756,7 +1757,8 @@
         '<div class="reihe"><label>' + esc(tr("mp_freq")) + '<select id="fld-mpfreq">' + opt("mp_freq_daily", "daily", d.frequency || "daily") +
         opt("mp_freq_custom", "custom", d.frequency) + opt("mp_freq_asneeded", "asneeded", d.frequency) + opt("mp_freq_once", "once", d.frequency) + "</select></label>" +
         "<label>" + esc(tr("mp_freq_note")) + '<input id="fld-mpfreqnote" type="text" placeholder="' + esc(tr("mp_freq_note_ph")) + '" value="' + esc(d.freq_note || "") + '"></label></div>' +
-        '<div class="reihe"><label>' + esc(tr("mp_start")) + inputHtml("mpstart", "date", d.start || (entry ? "" : today())) + "</label>" +
+        '<div class="reihe"><label>' + esc(tr("mp_start")) + '<input id="fld-mpstart" type="date" value="' + esc(d.start_unknown ? "" : (d.start || (entry ? "" : today()))) + '"' + (d.start_unknown ? " disabled" : "") + ">" +
+          '<span class="haken klein-haken"><input type="checkbox" id="fld-mpstartunk"' + (d.start_unknown ? " checked" : "") + "> " + esc(tr("mp_unknown")) + "</span></label>" +
         "<label>" + esc(tr("mp_end")) + inputHtml("mpend", "date", d.end || "") + "</label>" +
         "<label>" + esc(tr("mp_status")) + '<select id="fld-mpstatus">' + opt("mp_active", "active", d.status || "active") + opt("mp_paused", "paused", d.status) + opt("mp_ended", "ended", d.status) + "</select></label></div>" +
         "<label>" + esc(tr("mp_reason")) + inputHtml("reason", "text", L(d.reason) || pf.reason || "") + "</label>" +
@@ -1892,7 +1894,8 @@
       SLOTS.forEach(function (sl) { var v = num(val("mp-" + sl[0])); data[sl[0]] = v && !isNaN(v) && v > 0 ? v : 0; });
       data.frequency = $("fld-mpfreq").value;
       data.freq_note = val("mpfreqnote").trim();
-      data.start = val("mpstart");
+      data.start_unknown = !!($("fld-mpstartunk") && $("fld-mpstartunk").checked);
+      data.start = data.start_unknown ? "" : val("mpstart");
       data.end = val("mpend");
       data.status = $("fld-mpstatus").value;
       data.prescriber = val("mpprescriber").trim();
@@ -2291,6 +2294,11 @@
     setTimeout(function () { loadPreview(); }, 30);
   });
   $("formFelder").addEventListener("change", function (ev) {
+    if (ev.target.id === "fld-mpstartunk") {
+      $("fld-mpstart").disabled = ev.target.checked;
+      if (ev.target.checked) $("fld-mpstart").value = "";
+      return;
+    }
     if (ev.target.id === "fld-mpmed") {
       var m = state.entries.filter(function (x) { return String(x.id) === ev.target.value; })[0];
       if (m) $("fld-mpname").value = L(m.data.title).replace(/\s*\(.*\)\s*$/, "");

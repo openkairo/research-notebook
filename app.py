@@ -679,7 +679,9 @@ def plan_zeile(d):
     teile = [f"{d.get('name', '?')} {d.get('strength', '')}".strip(),
              f"{schema_} {FORMEN.get(d.get('form'), d.get('form') or '')}".strip(),
              HAEUFIGKEIT.get(d.get("frequency"), d.get("frequency") or "") + (f" ({d['freq_note']})" if d.get("freq_note") else "")]
-    if d.get("start") or d.get("end"):
+    if d.get("start_unknown"):
+        teile.append("seit: nicht bekannt" + (f" bis {d['end']}" if d.get("end") else ""))
+    elif d.get("start") or d.get("end"):
         teile.append(f"seit {d.get('start') or '?'}" + (f" bis {d['end']}" if d.get("end") else ""))
     if de(d.get("reason")):
         teile.append("Grund: " + de(d.get("reason")))
@@ -1782,7 +1784,7 @@ MCP_TOOLS = [
                                                       "form": {"type": "string", "enum": list(FORMEN)}, "morgens": {"type": "number"}, "mittags": {"type": "number"},
                                                       "abends": {"type": "number"}, "nachts": {"type": "number"},
                                                       "haeufigkeit": {"type": "string", "enum": list(HAEUFIGKEIT)}, "rhythmus": {"type": "string"},
-                                                      "start": {"type": "string"}, "ende": {"type": "string"}, "status": {"type": "string", "enum": ["active", "paused", "ended"]},
+                                                      "start": {"type": "string", "description": "YYYY-MM-DD oder 'unbekannt'"}, "ende": {"type": "string"}, "status": {"type": "string", "enum": ["active", "paused", "ended"]},
                                                       "grund": {"type": "string"}, "hinweise": {"type": "string"}, "verordnet_von": {"type": "string"},
                                                       "vorrat": {"type": "number", "description": "Anzahl Einheiten"}, "sprache": MCP_SPRACHE}}},
     {"name": "notebook_ueberblick", "schreibt": False,
@@ -2038,6 +2040,10 @@ def mcp_tool(name, a, recht):
                 data[ziel] = a[ein]
         if a.get("vorrat") is not None:
             data["stock_date"] = datetime.now().strftime("%Y-%m-%d")
+        if str(a.get("start", "")).strip().lower() in ("unbekannt", "nicht bekannt", "unknown", "?"):
+            data["start"], data["start_unknown"] = "", True
+        elif a.get("start"):
+            data["start_unknown"] = False
         data.update(_i18n_aus({k: a[e] for e, k in (("grund", "reason"), ("hinweise", "notes")) if a.get(e)}, lang))
         e = aendern(int(a["id"]), Entry(kind="medplan", data=data)) if a.get("id") else neu(Entry(kind="medplan", data=data, topic_id=thema()["id"]))
         protokoll(f"MCP Medikamentenplan #{e['id']}")

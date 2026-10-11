@@ -2,6 +2,7 @@
 
 ## Unveröffentlicht
 
+- Medikamentenplan: Beginn „nicht bekannt“ wählbar (auch per MCP mit `start: "unbekannt"`)
 - Medikamentenplan im Reiter Medikamente: aus den Medikamenten übernehmen oder frei anlegen; Stärke, Darreichungsform, Menge Morgens/Mittags/Abends/Nachts, Häufigkeit (täglich, Rhythmus, bei Bedarf, Zyklus), Zeitraum, Grund, Hinweise, verordnet von, Status; Tagesdosis und Vorrat mit „reicht bis“-Warnung; Druckansicht
 - Analyse, Chat und KI-Einordnungen berücksichtigen den Plan als tatsächlich eingenommene Medikation (Wechselwirkungen, Einnahmezeiten, Doppelungen, Laborkontrollen, Vorrat)
 - MCP: `medikamentenplan` (lesen) und `plan_eintrag_setzen` (schreiben)

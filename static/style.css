@@ -544,3 +544,7 @@ td.mp-zahl.leer { color: var(--linie); font-weight: 400; }
   body.drucke-plan .nur-druck { display: block !important; color: #000; }
   body.drucke-plan td.mp-zahl { color: #000; }
 }
+
+.klein-haken { display: flex; gap: 6px; align-items: center; font-weight: 400; font-size: 13px; color: var(--tinte); margin-top: 2px; }
+.klein-haken input { width: auto !important; }
+.fenster-rumpf input[type="date"]:disabled { opacity: .45; }
