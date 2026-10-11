@@ -2,6 +2,8 @@
 
 ## Unveröffentlicht
 
+- Blutdruck je Messung: systolisch/diastolisch und Puls werden zu einer Karte zusammengeführt (127/67 mmHg · Puls), mit Ø 7 Tage, Anteil über Grenze, Verlauf je Messung; „+ Blutdruck“ für Einzelmessungen; erkennt auch importierte Spalten am Namen
+- KI bekommt Blutdruck je Messung mit Statistik (Mittel, Anteil ≥ 135/85, morgens/abends)
 - CSV-Import versteht Monatsnamen (DE/EN/PL, auch abgekürzt wie „11. Okt. 2026“, „Oct 11, 2026“, „11 paź 2026“)
 - Eine CSV im Formular „+ Wert eintragen“ öffnet direkt den Import statt als Anhang zu scheitern
 - Messwerte aus CSV importieren (z. B. Blutdruckmessgerät, Gesundheits-App): Trennzeichen, Datum/Uhrzeit und typische Spalten (Systolisch, Diastolisch, Puls, Gewicht, Blutzucker; DE/EN/PL) werden erkannt, Zuordnung je Spalte mit Einheit und Normbereich, Vorschau, doppelte Messungen werden übersprungen

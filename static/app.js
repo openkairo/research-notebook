@@ -389,6 +389,18 @@
     csv_need_col: { de: "Bitte mindestens eine Spalte zum Importieren auswählen.", en: "Please select at least one column to import.", pl: "Wybierz co najmniej jedną kolumnę." },
     csv_switched: { de: "CSV erkannt — die Messwerte werden importiert. Bitte Zuordnung prüfen.", en: "CSV detected — the measurements will be imported. Please check the mapping.", pl: "Wykryto CSV — pomiary zostaną zaimportowane. Sprawdź przypisanie." },
     csv_reading: { de: "Lese Datei …", en: "Reading file …", pl: "Czytam plik …" },
+    bp_title: { de: "Blutdruck", en: "Blood pressure", pl: "Ciśnienie krwi" },
+    bp_new: { de: "+ Blutdruck", en: "+ Blood pressure", pl: "+ Ciśnienie" },
+    bp_sys: { de: "Systolisch (oberer Wert)", en: "Systolic (upper)", pl: "Skurczowe (górne)" },
+    bp_dia: { de: "Diastolisch (unterer Wert)", en: "Diastolic (lower)", pl: "Rozkurczowe (dolne)" },
+    bp_pulse: { de: "Puls (optional)", en: "Pulse (optional)", pl: "Tętno (opcjonalnie)" },
+    bp_time: { de: "Uhrzeit", en: "Time", pl: "Godzina" },
+    bp_avg7: { de: "Ø letzte 7 Tage", en: "Ø last 7 days", pl: "Ø ostatnie 7 dni" },
+    bp_high_share: { de: "über Grenze", en: "above limit", pl: "powyżej granicy" },
+    bp_value: { de: "Blutdruck", en: "Blood pressure", pl: "Ciśnienie" },
+    bp_pulse_col: { de: "Puls", en: "Pulse", pl: "Tętno" },
+    bp_show_all: { de: "Alle {n} Messungen anzeigen", en: "Show all {n} readings", pl: "Pokaż wszystkie {n} pomiarów" },
+    bp_need: { de: "Bitte systolischen und diastolischen Wert als Zahl eingeben.", en: "Please enter systolic and diastolic values as numbers.", pl: "Wpisz wartości skurczowe i rozkurczowe jako liczby." },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -447,6 +459,7 @@
   var KIND = {
     glossary: { tab: "glossary", fields: [["title", "f_term", "text"], ["body", "f_expl", "area"], ["tags", "f_tags", "tags"]] },
     medplan: { tab: "med", fields: [] },
+    bp: { tab: "values", fields: [] },
     med: { tab: "med", fields: [["title", "f_name", "text"], ["cls", "f_cls", "text"], ["body", "f_how", "area"], ["side", "f_side", "area"], ["notes", "f_notes", "area"]] },
     video: { tab: "videos", fields: [] },
     study: { tab: "studies", fields: [["title", "f_title", "text"], ["url", "f_study_url", "url"], ["year", "f_year", "text"], ["body", "f_study_note", "area"]] },
@@ -469,7 +482,7 @@
 
   var state = { lang: "de", tab: "home", entries: [], query: "", tag: "", confirm: null, editing: null, editKind: null, pending: [],
     settings: null, models: null, busy: {}, drafts: {}, aiIn: { web: true, mappe: false }, aiErr: {}, confirmKey: false, st: { q: "", source: "pubmed", land: "", open: true, recent: false, results: null, total: 0, imp: "" }, vCat: "", vLang: "", preview: null,
-    chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, planPrefill: null, showInactive: false, mcp: null, mcpShow: {}, mcpConfirm: null,
+    chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, planPrefill: null, showInactive: false, bpAll: false, mcp: null, mcpShow: {}, mcpConfirm: null,
     topics: null, topic: null, topicConfirm: false, topicQuery: "" };
   var OK_EXT = /\.(pdf|jpe?g|png|heic|heif|webp|csv)$/i;
   var MAX_BYTES = 30 * 1024 * 1024;
@@ -908,12 +921,100 @@
       '<circle cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="3.5" fill="' + dot + '"/></svg>';
   }
 
+  // Blutdruck = eine Messung aus systolisch/diastolisch (+ Puls). Gespeichert bleiben drei Werte, angezeigt wird eine Zeile.
+  function vitalArt(d) {
+    var p = d.param || "", lab = (d.paramLabel || "").toLowerCase();
+    if (p === "bp_sys" || /systol|\bsys\b|skurcz/.test(lab)) return "sys";
+    if (p === "bp_dia" || /diastol|\bdia\b|rozkurcz/.test(lab)) return "dia";
+    if (p === "pulse" || /puls|pulse|heart.?rate|herzfreq|tętno/.test(lab)) return "pulse";
+    return null;
+  }
+  function bpMessungen() {
+    var map = {}, list = [];
+    state.entries.forEach(function (e) {
+      if (e.kind !== "value") return;
+      var a = vitalArt(e.data);
+      if (!a) return;
+      var k = (e.data.date || "") + " " + (e.data.time || "");
+      if (!map[k]) { map[k] = { key: k, date: e.data.date, time: e.data.time || "" }; list.push(map[k]); }
+      map[k][a] = e;
+    });
+    list = list.filter(function (m) { return m.sys && m.dia; });
+    list.sort(function (a, b) { return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; });
+    return list;
+  }
+  function bpFlag(m) {
+    var s = m.sys.data, d = m.dia.data;
+    if ((s.high != null && s.value > s.high) || (d.high != null && d.value > d.high)) return "hoch";
+    if ((s.low != null && s.value < s.low) || (d.low != null && d.value < d.low)) return "niedrig";
+    return (s.high != null || d.high != null) ? "ok" : "ohne";
+  }
+  function bpSpark(list) {
+    var W = 150, H = 44, P = 4, items = list.slice(-60);
+    var sysV = items.map(function (m) { return Number(m.sys.data.value); }), diaV = items.map(function (m) { return Number(m.dia.data.value); });
+    var last = items[items.length - 1];
+    var lo = Math.min.apply(null, diaV), hi = Math.max.apply(null, sysV);
+    if (last.sys.data.high != null) hi = Math.max(hi, last.sys.data.high);
+    if (hi === lo) { hi += 1; lo -= 1; }
+    var y = function (v) { return H - P - (v - lo) / (hi - lo) * (H - 2 * P); };
+    var x = function (i) { return items.length === 1 ? W / 2 : P + i * (W - 2 * P) / (items.length - 1); };
+    var linie = function (vals, farbe) { return vals.length > 1 ? '<polyline points="' + vals.map(function (v, i) { return x(i).toFixed(1) + "," + y(v).toFixed(1); }).join(" ") +
+      '" fill="none" stroke="' + farbe + '" stroke-width="1.4" vector-effect="non-scaling-stroke"/>' : ""; };
+    var grenze = function (v) { return v == null ? "" : '<line x1="0" x2="' + W + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) + '" stroke="var(--schlecht)" stroke-width="1" stroke-dasharray="3 3" opacity=".5" vector-effect="non-scaling-stroke"/>'; };
+    return '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true">' + grenze(last.sys.data.high) + grenze(last.dia.data.high) +
+      linie(sysV, "var(--akzent)") + linie(diaV, "var(--ki)") + "</svg>";
+  }
+  function bpCard(list) {
+    var last = list[list.length - 1], s = last.sys.data, d = last.dia.data;
+    // Ø der letzten 7 Tage bezogen auf die jüngste Messung
+    var grenze = new Date(new Date(last.date + "T12:00:00").getTime() - 6 * 86400000);
+    var g7 = grenze.getFullYear() + "-" + ("0" + (grenze.getMonth() + 1)).slice(-2) + "-" + ("0" + grenze.getDate()).slice(-2);
+    var woche = list.filter(function (m) { return m.date >= g7; });
+    var mittel = function (arr, a) { return Math.round(arr.reduce(function (t, m) { return t + Number(m[a].data.value); }, 0) / arr.length); };
+    var ueber = list.filter(function (m) { return bpFlag(m) === "hoch"; }).length;
+    var zeige = state.bpAll ? list.slice().reverse() : list.slice(-60).reverse();
+    var rows = zeige.map(function (m) {
+      var ck = "bp:" + m.key;
+      if (state.confirm === ck) {
+        return '<tr><td colspan="5"><span class="bestaetigen">' + esc(tr("del_q")) + ' <button type="button" class="knopf klein gefahr" data-act="bp-del-yes" data-k="' + esc(m.key) + '">' + esc(tr("yes_del")) +
+          '</button> <button type="button" class="knopf klein" data-act="del-no">' + esc(tr("cancel")) + "</button></span></td></tr>";
+      }
+      var notiz = [m.sys, m.dia, m.pulse].map(function (e) { return e ? L(e.data.note) : ""; }).filter(Boolean)[0] || "";
+      return "<tr><td>" + fmtDate(m.date) + (m.time ? ' <span class="hinweis">' + esc(m.time) + "</span>" : "") + '</td><td class="wert">' +
+        fmtNum(m.sys.data.value) + "/" + fmtNum(m.dia.data.value) + " " + flagHtml(bpFlag(m)) + '</td><td class="wert">' + (m.pulse ? fmtNum(m.pulse.data.value) : "–") +
+        '</td><td class="notiz">' + hl(notiz) + '</td><td style="white-space:nowrap"><button type="button" class="knopf klein" data-act="bp-edit" data-k="' + esc(m.key) + '">' + esc(tr("edit")) + "</button> " +
+        '<button type="button" class="knopf klein gefahr" data-act="bp-del" data-k="' + esc(m.key) + '" aria-label="' + esc(tr("del")) + '">×</button></td></tr>';
+    }).join("");
+    var open = state.openParam === "bp" || (state.confirm && String(state.confirm).indexOf("bp:") === 0);
+    return '<div class="karte param blutdruck"><div><h3>' + esc(tr("bp_title")) + '</h3><div class="kennzahl"><span class="wert">' + fmtNum(s.value) + "/" + fmtNum(d.value) + "</span> " +
+      '<span class="hinweis">mmHg</span> ' + flagHtml(bpFlag(last)) + (last.pulse ? ' <span class="puls">♥ ' + fmtNum(last.pulse.data.value) + ' <span class="hinweis">/min</span></span>' : "") + "</div>" +
+      '<div class="meta">' + fmtDate(last.date) + (last.time ? " " + esc(last.time) : "") + " · " + esc(tr("bp_avg7")) + " " + mittel(woche, "sys") + "/" + mittel(woche, "dia") +
+      (s.high != null || d.high != null ? " · " + esc(tr("ref")) + " ≤ " + (s.high != null ? fmtNum(s.high) : "–") + "/" + (d.high != null ? fmtNum(d.high) : "–") : "") +
+      " · " + list.length + " " + esc(tr("measurements")) + (ueber ? " · " + ueber + " " + esc(tr("bp_high_share")) : "") + "</div></div>" + bpSpark(list) +
+      '<details class="verlauf" data-param="bp"' + (open ? " open" : "") + "><summary>" + esc(tr("history")) + "</summary>" +
+      "<table><thead><tr><th>" + esc(tr("f_date")) + "</th><th>" + esc(tr("bp_value")) + "</th><th>" + esc(tr("bp_pulse_col")) + "</th><th>" + esc(tr("f_assess")) + "</th><th></th></tr></thead><tbody>" +
+      rows + "</tbody></table>" + (!state.bpAll && list.length > 60 ? '<button type="button" class="mehr-knopf" data-act="bp-all">' + esc(tr("bp_show_all").replace("{n}", list.length)) + "</button>" : "") +
+      "</details>" + '<div class="verlauf">' + aiBlock(last.sys) + "</div></div>";
+  }
+  function bpVorlage(art) {
+    // Neue Messungen so speichern wie die vorhandene Reihe (gleiche Bezeichnung, Einheit, Grenzen)
+    var vorh = state.entries.filter(function (e) { return e.kind === "value" && vitalArt(e.data) === art; }).sort(function (a, b) { return b.id - a.id; })[0];
+    if (vorh) return { param: vorh.data.param, paramLabel: vorh.data.paramLabel || "", unit: vorh.data.unit || "", low: vorh.data.low, high: vorh.data.high };
+    var p = PARAM_BY_KEY[{ sys: "bp_sys", dia: "bp_dia", pulse: "pulse" }[art]];
+    return isHealth() ? { param: p.key, paramLabel: "", unit: p.unit, low: p.low, high: p.high } : { param: "_other", paramLabel: p.n.de, unit: p.unit, low: p.low, high: p.high };
+  }
+
   function renderValues() {
     var q = state.query.trim();
     var groups = valueGroups().filter(function (g) {
       return !q || g.items.some(matches) || g.name.toLowerCase().indexOf(q.toLowerCase()) !== -1;
     });
-    var labs = groups.map(function (g) {
+    var bpList = bpMessungen().filter(function (m) { return !q || [m.sys, m.dia, m.pulse].some(function (e) { return e && matches(e); }) || /blut|blood|ciśn|druck/i.test(q); });
+    var bpIds = {};
+    bpMessungen().forEach(function (m) { [m.sys, m.dia, m.pulse].forEach(function (e) { if (e) bpIds[e.id] = 1; }); });
+    // Reihen, die vollständig in der Blutdruck-Karte stecken, nicht noch einmal einzeln zeigen
+    groups = groups.filter(function (g) { return !g.items.every(function (e) { return bpIds[e.id]; }); });
+    var labs = (bpList.length ? bpCard(bpList) : "") + groups.map(function (g) {
       var last = g.items[g.items.length - 1].data;
       var rows = g.items.slice().reverse().map(function (e) {
         var d = e.data;
@@ -939,8 +1040,9 @@
     var analyses = byKind("analysis").filter(function (e) { return e.data.scope === "values"; }).sort(function (a, b) { return b.id - a.id; });
     var findings = byKind("finding").sort(function (a, b) { return (a.data.date || "") < (b.data.date || "") ? 1 : -1; });
     return '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("labs")) + "</h2><p>" + esc(tr("labs_sub")) + "</p></div>" +
-      '<div class="knoepfe">' + (hasKey() && groups.length ? '<button type="button" class="knopf ki" data-act="ai-values"' + (state.busy.values ? " disabled" : "") + ">✦ " + esc(tr("ai_values_btn")) + "</button>" : "") +
+      '<div class="knoepfe">' + (hasKey() && (groups.length || bpList.length) ? '<button type="button" class="knopf ki" data-act="ai-values"' + (state.busy.values ? " disabled" : "") + ">✦ " + esc(tr("ai_values_btn")) + "</button>" : "") +
       '<button type="button" class="knopf" data-act="csv-open">' + esc(tr("csv_btn")) + "</button>" +
+      (isHealth() || bpList.length ? '<button type="button" class="knopf" data-act="new" data-kind="bp">' + esc(tr("bp_new")) + "</button>" : "") +
       '<button type="button" class="knopf" data-act="new" data-kind="value">' + esc(tr("new_value")) + "</button></div></div>" + busyHtml("values") +
       (labs ? '<div class="liste">' + labs + "</div>" : q ? '<div class="leer">' + esc(tr("empty_search")) + "</div>" : emptyBox("empty_values", "value")) + "</section>" +
       '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("findings")) + "</h2><p>" + esc(tr("findings_sub")) + "</p></div>" +
@@ -1829,6 +1931,35 @@
       }, function (err) { $("formSpeichern").disabled = false; $("formStatus").textContent = err.message; });
   }
 
+  function submitBp() {
+    var m = state.editing || {};
+    var sysV = num(val("bpsys")), diaV = num(val("bpdia")), pulV = num(val("bppulse"));
+    if (sysV == null || isNaN(sysV) || diaV == null || isNaN(diaV)) { $("formStatus").textContent = tr("bp_need"); return; }
+    var datum = val("bpdate") || today(), zeit = val("bptime") || "";
+    var notiz = val("note").trim();
+    $("formSpeichern").disabled = true;
+    $("formStatus").textContent = notiz && $("uebersetzen").checked ? tr("translating") : tr("saving");
+    var uebers = notiz && $("uebersetzen").checked
+      ? api("POST", "/api/translate", { source: state.lang, fields: { note: notiz } }).then(function (r) { return (r.fields || {}).note; }, function () { return null; })
+      : Promise.resolve(null);
+    uebers.then(function (n18) {
+      var noteObj = {}; LANGS.forEach(function (l) { noteObj[l] = n18 ? n18[l] : notiz; });
+      var leer = {}; LANGS.forEach(function (l) { leer[l] = ""; });
+      var jobs = [];
+      [["sys", sysV], ["dia", diaV], ["pulse", pulV]].forEach(function (x, i) {
+        var art = x[0], wert = x[1], vorh = m[art];
+        var gueltig = wert != null && !isNaN(wert);
+        if (!gueltig) { if (vorh) jobs.push(api("DELETE", "/api/entries/" + vorh.id)); return; }
+        var data = vorh ? JSON.parse(JSON.stringify(vorh.data)) : bpVorlage(art);
+        data.value = wert; data.date = datum; data.time = zeit;
+        data.note = i === 0 ? noteObj : (data.note || leer);
+        jobs.push(vorh ? api("PUT", "/api/entries/" + vorh.id, { kind: "value", data: data }) : api("POST", "/api/entries", { kind: "value", data: data }));
+      });
+      return Promise.all(jobs);
+    }).then(function () { closeForm(); state.openParam = "bp"; toast(tr("saved")); loadEntries(); },
+      function () { $("formSpeichern").disabled = false; $("formStatus").textContent = tr("err_save"); });
+  }
+
   function openTopicForm(t) {
     state.editKind = "topic";
     state.editing = t || null;
@@ -1885,9 +2016,20 @@
     state.pending = [];
     state.editKind = kind;
     state.editing = entry || null;
-    var d = entry ? entry.data : {};
+    var d = entry && entry.data ? entry.data : {};
     var html = "";
-    if (kind === "medplan") {
+    if (kind === "bp") {
+      var m = entry || {};
+      var vv = function (e) { return e ? fmtNum(e.data.value) : ""; };
+      var notiz0 = [m.sys, m.dia, m.pulse].map(function (e) { return e ? L(e.data.note) : ""; }).filter(Boolean)[0] || "";
+      var jetztZeit = function () { var t = new Date(); return ("0" + t.getHours()).slice(-2) + ":" + ("0" + t.getMinutes()).slice(-2); };
+      html = '<div class="reihe"><label>' + esc(tr("f_date")) + inputHtml("bpdate", "date", m.date || today()) + "</label>" +
+        "<label>" + esc(tr("bp_time")) + '<input id="fld-bptime" type="time" value="' + esc(m.time || (entry ? "" : jetztZeit())) + '"></label></div>' +
+        '<div class="reihe bp-felder"><label>' + esc(tr("bp_sys")) + '<input id="fld-bpsys" type="text" inputmode="numeric" value="' + vv(m.sys) + '" placeholder="120"></label>' +
+        "<label>" + esc(tr("bp_dia")) + '<input id="fld-bpdia" type="text" inputmode="numeric" value="' + vv(m.dia) + '" placeholder="80"></label>' +
+        "<label>" + esc(tr("bp_pulse")) + '<input id="fld-bppulse" type="text" inputmode="numeric" value="' + vv(m.pulse) + '" placeholder="70"></label></div>' +
+        "<label>" + esc(tr("f_assess")) + inputHtml("note", "area", notiz0) + "</label>";
+    } else if (kind === "medplan") {
       var pf = state.planPrefill || {};
       state.planPrefill = null;
       var meds = state.entries.filter(function (x) { return x.kind === "med"; }).sort(function (a, b) { return L(a.data.title).localeCompare(L(b.data.title), state.lang); });
@@ -1963,13 +2105,13 @@
         html += "<label>" + esc(tr(f[1])) + inputHtml(f[0], f[2], v) + "</label>";
       });
     }
-    html += '<div class="datei-feld"><label>' + esc(tr("f_files")) +
+    if (kind !== "bp") html += '<div class="datei-feld"><label>' + esc(tr("f_files")) +
       '<input id="fld-files" type="file" multiple accept=".pdf,application/pdf,image/*,.csv,text/csv"></label>' +
       '<span class="hinweis">' + esc(tr("f_files_hint")) + '</span><div id="dateiListe"></div></div>';
     html += '<span class="hinweis">' + esc(tr("edit_lang")) + "</span>";
     $("formFelder").innerHTML = html;
     renderFileList();
-    $("formTitel").textContent = (entry ? tr("edit") : tr("new_any").replace("+ ", "")) + " · " + tr("k_" + kind);
+    $("formTitel").textContent = (entry ? tr("edit") : tr("new_any").replace("+ ", "")) + " · " + (kind === "bp" ? tr("bp_title") : tr("k_" + kind));
     $("formStatus").textContent = "";
     $("formSpeichern").disabled = false;
     $("schleier").hidden = false;
@@ -2033,6 +2175,7 @@
       if (changed && text.trim()) texts[name] = text;
     };
 
+    if (kind === "bp") { submitBp(); return; }
     if (kind === "medplan") {
       var mid = $("fld-mpmed") ? $("fld-mpmed").value : "";
       var nameV = val("mpname").trim();
@@ -2201,6 +2344,16 @@
     }
     if (act === "gloss-all") { state.glossAll = !state.glossAll; state.openGloss = {}; render(); return; }
     if (act === "csv-open") { openCsvForm(); return; }
+    var bpk = b.getAttribute("data-k");
+    var bpM = bpk ? bpMessungen().filter(function (x) { return x.key === bpk; })[0] : null;
+    if (act === "bp-edit" && bpM) { openForm("bp", bpM); return; }
+    if (act === "bp-del" && bpM) { state.confirm = "bp:" + bpk; render(); return; }
+    if (act === "bp-all") { state.bpAll = true; render(); return; }
+    if (act === "bp-del-yes" && bpM) {
+      Promise.all([bpM.sys, bpM.dia, bpM.pulse].filter(Boolean).map(function (e) { return api("DELETE", "/api/entries/" + e.id); }))
+        .then(function () { state.confirm = null; toast(tr("deleted")); loadEntries(); }, function () { toast(tr("err_save")); });
+      return;
+    }
     if (act === "plan-from-med" && entry) {
       state.planPrefill = { med_id: entry.id, name: L(entry.data.title).replace(/\s*\(.*\)\s*$/, "") };
       openForm("medplan");

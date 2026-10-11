@@ -559,3 +559,8 @@ td.mp-zahl.leer { color: var(--linie); font-weight: 400; }
 .csv-tabelle .haken { flex-direction: row; white-space: nowrap; font-weight: 600; color: var(--tinte); }
 .csv-tabelle input[data-csv="label"] { margin-top: 4px; }
 .csv-tabelle.vorschau td { white-space: nowrap; color: var(--leise); }
+
+/* Blutdruck-Karte */
+.blutdruck .kennzahl .wert { font-size: 26px; }
+.blutdruck .puls { font-family: var(--f-zahl); color: var(--akzent); margin-left: 6px; }
+.bp-felder input { font: 600 20px var(--f-zahl); text-align: center; }

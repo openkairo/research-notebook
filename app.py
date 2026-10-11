@@ -695,6 +695,54 @@ def plan_zeile(d):
     return " · ".join(t for t in teile if t)
 
 
+def vital_art(d):
+    """Blutdruck/Puls erkennen — über die Vorlage oder den Namen (auch bei importierten Spalten wie „Systolisch (mmHg)“)."""
+    p, lab = d.get("param") or "", (d.get("paramLabel") or "").lower()
+    if p == "bp_sys" or re.search(r"systol|\bsys\b|skurcz", lab):
+        return "sys"
+    if p == "bp_dia" or re.search(r"diastol|\bdia\b|rozkurcz", lab):
+        return "dia"
+    if p == "pulse" or re.search(r"puls|pulse|heart.?rate|herzfreq|tętno", lab):
+        return "pulse"
+    return None
+
+
+def blutdruck_text(werte):
+    """Blutdruck je Messung (127/67, Puls 76) statt drei getrennter Reihen — mit Statistik für die KI."""
+    mess = {}
+    for d in werte:
+        art = vital_art(d)
+        if art:
+            mess.setdefault((d.get("date") or "", d.get("time") or ""), {})[art] = d
+    liste = [(k, m) for k, m in sorted(mess.items()) if "sys" in m and "dia" in m]
+    if not liste:
+        return [], set()
+    def v(m, a):
+        x = (m.get(a) or {}).get("value")
+        return x if isinstance(x, (int, float)) else None
+    sys_ = [v(m, "sys") for _, m in liste if v(m, "sys") is not None]
+    dia_ = [v(m, "dia") for _, m in liste if v(m, "dia") is not None]
+    puls = [v(m, "pulse") for _, m in liste if v(m, "pulse") is not None]
+    hoch = sum(1 for _, m in liste if (v(m, "sys") or 0) >= 135 or (v(m, "dia") or 0) >= 85)
+    zeilen = ["\n## Blutdruck je Messung (systolisch/diastolisch mmHg, Puls /min)"]
+    zeilen.append(f"- {len(liste)} Messungen vom {liste[0][0][0]} bis {liste[-1][0][0]}; Mittel {sum(sys_) / len(sys_):.0f}/{sum(dia_) / len(dia_):.0f} mmHg"
+                  + (f", Puls {sum(puls) / len(puls):.0f}" if puls else "")
+                  + f"; Spanne systolisch {min(sys_)}–{max(sys_)}, diastolisch {min(dia_)}–{max(dia_)}; "
+                  f"{hoch} Messungen ({100 * hoch / len(liste):.0f} %) bei oder über 135/85 (Grenzwert für Heimmessungen)")
+    for name, test in (("morgens (vor 12 Uhr)", lambda z: z and z < "12:00"), ("abends (ab 17 Uhr)", lambda z: z and z >= "17:00")):
+        teil = [m for (dt, z), m in liste if test(z)]
+        if len(teil) >= 5:
+            zeilen.append(f"- {name}: {len(teil)} Messungen, Mittel {sum(v(m, 'sys') for m in teil) / len(teil):.0f}/{sum(v(m, 'dia') for m in teil) / len(teil):.0f}")
+    letzte = liste[-30:]
+    zeilen.append(f"- die letzten {len(letzte)} Messungen:")
+    for (dt, z), m in letzte:
+        notiz = next((x for x in ((m.get(a) or {}).get("note") for a in ("sys", "dia", "pulse")) if isinstance(x, dict) and any(x.values())), None)
+        notiz_t = (notiz.get("de") or next((y for y in notiz.values() if y), "")) if notiz else ""
+        zeilen.append(f"  - {dt} {z}: {v(m, 'sys')}/{v(m, 'dia')}" + (f", Puls {v(m, 'pulse')}" if v(m, "pulse") is not None else "") + (f" — {notiz_t}" if notiz_t else ""))
+    benutzte = {id(d) for _, m in liste for d in m.values()}
+    return zeilen, benutzte
+
+
 def kontext(details=True):
     """Die Mappe als knapper Text für die KI: Werte, Befunde, eigene Medikamenten-Notizen, Recherche-Titel."""
     with db() as con:
@@ -706,9 +754,12 @@ def kontext(details=True):
                    key=lambda e: (e["data"].get("paramLabel") or e["data"].get("param", ""), e["data"].get("date", ""), e["data"].get("time") or ""))
     if werte:
         teile.append("## Laborwerte und Messungen (Datum Uhrzeit: Wert Einheit [Referenz] Notiz)")
+        bd_zeilen, bd_benutzt = blutdruck_text([e["data"] for e in werte])
         reihen = {}
         for e in werte:
             d = e["data"]
+            if id(d) in bd_benutzt:
+                continue  # steht zusammengefasst im Blutdruck-Abschnitt
             reihen.setdefault(d.get("paramLabel") or PARAM_NAMEN.get(d.get("param"), d.get("param")), []).append(d)
         for name, liste in reihen.items():
             # Bei vielen Messungen (z. B. importierte Blutdruckreihen) Statistik + die letzten 30 statt aller Zeilen
@@ -722,6 +773,7 @@ def kontext(details=True):
                 ref = f"[{d.get('low') if d.get('low') is not None else ''}–{d.get('high') if d.get('high') is not None else ''}]"
                 zeit = f" {d['time']}" if d.get("time") else ""
                 teile.append(f"- {name} {d.get('date')}{zeit}: {d.get('value')} {d.get('unit', '')} {ref} {de(d.get('note'))}".rstrip())
+        teile += bd_zeilen
     befunde = [e for e in rows if e["kind"] == "finding"]
     if befunde:
         teile.append("\n## Befunde und eigene Einschätzungen")
@@ -985,7 +1037,11 @@ def ki_befund(eid: int, s: Sprache):
     d = e["data"]
     def de(v):
         return v.get("de") or next((x for x in v.values() if x), "") if isinstance(v, dict) else (v or "")
-    if e["kind"] == "value":
+    if e["kind"] == "value" and vital_art(d):
+        gegenstand = ("die Blutdruck-Messreihe (systolisch/diastolisch mit Puls, je Messung; Statistik und die letzten Messungen stehen "
+                      "unten im Notizbuch) — mit Tagesprofil morgens/abends, Anteil erhöhter Werte nach den Grenzwerten für Heimmessungen "
+                      "(135/85 mmHg) und Trend")
+    elif e["kind"] == "value":
         gegenstand = f"die Messreihe zu „{d.get('paramLabel') or PARAM_NAMEN.get(d.get('param'), d.get('param'))}“ (alle Werte stehen unten in der Mappe), zuletzt {d.get('date')}: {d.get('value')} {d.get('unit', '')}"
     else:
         gegenstand = f"den Befund „{de(d.get('title'))}“ vom {d.get('date', '?')}:\n\n{de(d.get('body'))}"
