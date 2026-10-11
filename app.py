@@ -719,7 +719,9 @@ def blutdruck_text(werte):
         return [], set()
     def v(m, a):
         x = (m.get(a) or {}).get("value")
-        return x if isinstance(x, (int, float)) else None
+        if not isinstance(x, (int, float)):
+            return None
+        return int(x) if float(x).is_integer() else x
     sys_ = [v(m, "sys") for _, m in liste if v(m, "sys") is not None]
     dia_ = [v(m, "dia") for _, m in liste if v(m, "dia") is not None]
     puls = [v(m, "pulse") for _, m in liste if v(m, "pulse") is not None]
@@ -772,7 +774,9 @@ def kontext(details=True):
             for d in liste:
                 ref = f"[{d.get('low') if d.get('low') is not None else ''}–{d.get('high') if d.get('high') is not None else ''}]"
                 zeit = f" {d['time']}" if d.get("time") else ""
-                teile.append(f"- {name} {d.get('date')}{zeit}: {d.get('value')} {d.get('unit', '')} {ref} {de(d.get('note'))}".rstrip())
+                wert = d.get("value")
+                wert = int(wert) if isinstance(wert, float) and wert.is_integer() else wert
+                teile.append(f"- {name} {d.get('date')}{zeit}: {wert} {d.get('unit', '')} {ref} {de(d.get('note'))}".rstrip())
         teile += bd_zeilen
     befunde = [e for e in rows if e["kind"] == "finding"]
     if befunde:
@@ -1102,6 +1106,25 @@ def ki_werte(s: Sprache):
     return analyse_speichern("values", openai_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()), aufwand="high"))
 
 
+def analyse_zusatz():
+    """Ausdrückliche Prüfaufträge für Messwerte und Medikamentenplan — unabhängig von der Art des Themas."""
+    with db() as con:
+        tid = thema()["id"]
+        n_werte = con.execute("SELECT COUNT(*) FROM entries WHERE kind='value' AND topic_id=?", (tid,)).fetchone()[0]
+        n_plan = con.execute("SELECT COUNT(*) FROM entries WHERE kind='medplan' AND topic_id=?", (tid,)).fetchone()[0]
+    teile = []
+    if n_werte:
+        teile.append("'## Messwerte' (eigener Abschnitt: Verlauf und Trend jeder Reihe, Mittelwerte, Anteil außerhalb des Zielbereichs, "
+                     "Tageszeit-Unterschiede, Auffälligkeiten; konkrete Zahlen aus dem Notizbuch nennen)")
+    if n_plan:
+        teile.append("'## Medikamentenplan' (eigener Abschnitt: jedes Medikament mit Stärke und Einnahmezeit; passt die Wirkung zu den "
+                     "Messwerten — z. B. Werte nach Beginn bzw. zur Einnahmezeit; Wechselwirkungen, Einnahmezeiten, Doppelungen, "
+                     "Dosis im üblichen Rahmen, sinnvolle Kontrollen — alles als Einschätzung, nie eigenmächtig ändern)")
+    if not teile:
+        return ""
+    return " Zusätzlich, weil im Notizbuch hinterlegt, unbedingt diese Abschnitte nach '## Wo wir stehen' einfügen: " + ", ".join(teile) + ". "
+
+
 @app.post("/api/ai/hints")
 def ki_hinweise(s: Sprache):
     thema_setzen(s.topic)
@@ -1111,7 +1134,8 @@ def ki_hinweise(s: Sprache):
             "Gliedere: '## Wo wir stehen' (Stand in 3–5 Sätzen), '## Was als Nächstes sinnvoll ist', '## Was noch fehlt' "
             "(Lücken in Recherche, Unterlagen, Entscheidungen), '## Offene Fragen' (an wen man sie richten sollte), "
             "'## Tipps & Fallstricke' (konkret, belegt). Ist das Notizbuch noch leer, erkläre, womit man sinnvoll anfängt. "
-            f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
+            + analyse_zusatz()
+            + f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
         )
         return analyse_speichern("hints", openai_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()), web=True, aufwand="medium"))
     auftrag = (
@@ -1120,12 +1144,10 @@ def ki_hinweise(s: Sprache):
         "Gliedere: '## Wo wir stehen' (Lage in 3–5 Sätzen, soweit aus der Mappe ableitbar), '## Was als Nächstes "
         "üblich ist' (laut Leitlinie, als Orientierung), '## Was im Notizbuch noch fehlt' (Werte, Untersuchungen, "
         "Unterlagen oder offene Entscheidungen, die für genau dieses Thema typischerweise wichtig sind), "
-        "'## Medikamentenplan' (nur wenn einer hinterlegt ist: Wechselwirkungen zwischen den Medikamenten und mit "
-        "Nahrungsergänzung, Einnahmezeitpunkte und Abstände, Doppelungen, Dosis im üblichen Rahmen?, passende Laborkontrollen "
-        "zu den Werten im Notizbuch, Vorrat — alles als Einschätzung, nie eigenmächtig ändern), "
+        "(Wechselwirkungen auch mit Nahrungsergänzung und passende Laborkontrollen beachten) "
         "'## Fragen fürs nächste Arztgespräch', '## Alltag' (konkrete, belegte Tipps zum Thema), '## Warnzeichen' "
         "(nur solche, die zu diesem Thema passen). Ist das Notizbuch noch leer, erkläre, womit man bei diesem Thema "
-        "sinnvoll anfängt. " + f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
+        "sinnvoll anfängt. " + analyse_zusatz() + f"'title' z. B. „Analyse {datetime.now():%d.%m.%Y}“. " + mehrsprachig_auftrag(s.lang)
     )
     return analyse_speichern("hints", openai_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()),
                                                   web=True, aufwand="medium"))
@@ -2506,6 +2528,53 @@ def studien_gesamtbild(s_: Sprache):
     out = llm_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()), aufwand="high")
     e = analyse_speichern("studies", out)
     protokoll(f"Studien-Gesamtbild Thema #{thema()['id']} ({len(rows)} Studien)")
+    return e
+
+
+@app.post("/api/ai/videos")
+def videos_gesamtbild(s_: Sprache):
+    """Synthese über alle Videos & Links des aktuellen Themas (Transkripte, Zusammenfassungen, Notizen); gespeichert als Analyse."""
+    thema_setzen(s_.topic)
+    with db() as con:
+        rows = [zeile(r) for r in con.execute("SELECT * FROM entries WHERE kind='video' AND topic_id=? ORDER BY id", (thema()["id"],))]
+    if not rows:
+        raise HTTPException(400, "In diesem Thema sind noch keine Videos gespeichert.")
+    def de(v):
+        return v.get("de") or next((x for x in v.values() if x), "") if isinstance(v, dict) else (v or "")
+    # Platz gerecht verteilen: insgesamt rund 110.000 Zeichen Transkript
+    je_video = max(2500, 110000 // len(rows))
+    teile, mit_text = [], 0
+    for i, e in enumerate(rows, 1):
+        d = e["data"]
+        titel = d["title"] if isinstance(d.get("title"), str) else de(d.get("title"))
+        teil = f"### [{i}] {titel}\n{d.get('channel', '')} · {d.get('duration') or ''} · Sprache {(d.get('vlang') or '?').upper()} · {d.get('url', '')}"
+        sm = d.get("summary") or {}
+        if sm:
+            teil += f"\nBisherige Zusammenfassung: {de(sm.get('text'))[:3000]}"
+        tr_ = (d.get("transcript") or {}).get("text", "")
+        if tr_:
+            mit_text += 1
+            teil += f"\nTranskript (ggf. gekürzt):\n{tr_[:je_video]}"
+        if de(d.get("note")):
+            teil += f"\nEigene Notiz: {de(d.get('note'))}"
+        teile.append(teil)
+    auftrag = (
+        f"Fasse alle {len(rows)} Videos bzw. Links zusammen, die im Notizbuch zum Thema „{thema_name()}“ ({thema_bezug()}) gespeichert sind "
+        f"({mit_text} davon mit Transkript). Verweise im Text auf einzelne Videos mit ihrer Nummer in eckigen Klammern, z. B. [3].\n\n"
+        + "\n\n".join(teile)[:130000] + "\n\n"
+        "Zum Bezug das Notizbuch:\n\n" + kontext(details=False)[:10000] + "\n\n"
+        "Gliedere 'body' so: '## Überblick' (worum es in den Videos insgesamt geht, Kanäle, Umfang), "
+        "'## Die wichtigsten Erkenntnisse' (Kernaussagen mit [Nr.], mit Zahlen wo genannt), "
+        "'## Wo sich die Videos unterscheiden oder widersprechen', "
+        "'## Wie verlässlich das ist' (wer spricht, Belege, Aktualität, wo vereinfacht oder vom Stand der Wissenschaft abgewichen wird), "
+        "'## Was das für uns heißt' (Bezug zum Notizbuch, als Einschätzung), "
+        "'## Womit man anfangen sollte' (sinnvolle Reihenfolge der Videos mit kurzer Begründung), '## Offene Fragen'. "
+        "Videos ohne Transkript nur anhand von Titel und Notiz einordnen und das kennzeichnen. "
+        f"'title' z. B. „Videos im Überblick {datetime.now():%d.%m.%Y} ({len(rows)} Videos)“. " + mehrsprachig_auftrag(s_.lang)
+    )
+    out = llm_json(auftrag, schema(title=i18n_schema(), body=i18n_schema()), aufwand="medium")
+    e = analyse_speichern("videos", out)
+    protokoll(f"Video-Gesamtbild Thema #{thema()['id']} ({len(rows)} Videos, {mit_text} mit Transkript)")
     return e
 
 

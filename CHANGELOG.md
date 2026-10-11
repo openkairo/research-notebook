@@ -2,6 +2,9 @@
 
 ## Unveröffentlicht
 
+- Videos & Links: „Alle Videos zusammenfassen“ — KI-Gesamtbild über alle Videos des Themas (Erkenntnisse mit Verweisen [Nr.], Widersprüche, Verlässlichkeit, Bezug zum Notizbuch, Reihenfolge zum Anschauen); Videos ohne Transkript werden gekennzeichnet
+- Analyse: eigene Abschnitte „Messwerte“ und „Medikamentenplan“ in jedem Thema, sobald welche hinterlegt sind (Trend, Anteil außerhalb des Zielbereichs, Wirkung der Medikamente an den Werten)
+- Werte erscheinen für die KI ohne „.0“ (135/72 statt 135.0/72.0)
 - Diagramme für alle Messreihen: Zeit- und Werteachse, Normbereich als Band, Grenzen gestrichelt, Zeitraum 30 Tage / 90 Tage / 1 Jahr / alle, Wert-Anzeige beim Überfahren (auch per Finger); bei vielen Messungen 7-Tage-Mittel als Linie über den Einzelmessungen; Blutdruck systolisch/diastolisch gemeinsam, Puls eigenes Diagramm; „Alle Diagramme“ öffnet alle auf einmal; Farben für Farbenblindheit geprüft, eigene Töne im dunklen Modus
 - CSV-Import: Die KI entscheidet vor dem Import je Spalte, ob und wie gespeichert wird (Vorlage oder eigener Name, Einheit, zum Thema passender Normbereich) und begründet es; vorhandene Reihen haben Vorrang; funktioniert in jedem Thema
 - Doppelprüfung beim Import erkennt Blutdruck und Puls am Messwert, unabhängig vom gespeicherten Namen

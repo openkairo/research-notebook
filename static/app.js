@@ -419,6 +419,13 @@
     ch_none: { de: "Keine Messungen in diesem Zeitraum.", en: "No readings in this period.", pl: "Brak pomiarów w tym okresie." },
     ch_all_open: { de: "📈 Alle Diagramme", en: "📈 All charts", pl: "📈 Wszystkie wykresy" },
     ch_all_close: { de: "Diagramme ausblenden", en: "Hide charts", pl: "Ukryj wykresy" },
+    vg_title: { de: "Gesamtbild der Videos", en: "Overall picture of the videos", pl: "Obraz całości filmów" },
+    vg_sub: { de: "Die KI liest alle Videos dieses Themas — Transkripte, Zusammenfassungen und deine Notizen — und fasst zusammen: die wichtigsten Erkenntnisse, Widersprüche, wie verlässlich das ist, was es für euch heißt und womit man anfangen sollte.", en: "The AI reads all videos in this topic — transcripts, summaries and your notes — and summarises: key insights, contradictions, how reliable it is, what it means for you and where to start.", pl: "AI czyta wszystkie filmy tego tematu — transkrypcje, streszczenia i twoje notatki — i podsumowuje: najważniejsze wnioski, sprzeczności, wiarygodność, znaczenie dla was i od czego zacząć." },
+    vg_btn: { de: "Alle Videos zusammenfassen", en: "Summarise all videos", pl: "Podsumuj wszystkie filmy" },
+    vg_note: { de: "Nur die Videos dieses Themas — Transkripte, Zusammenfassungen und Notizen werden dafür an die KI übermittelt. Videos ohne Transkript fließen nur mit Titel und Notiz ein.", en: "Only the videos in this topic — transcripts, summaries and notes are sent to the AI. Videos without a transcript are included by title and note only.", pl: "Tylko filmy tego tematu — transkrypcje, streszczenia i notatki są przesyłane do AI. Filmy bez transkrypcji wchodzą tylko z tytułem i notatką." },
+    vg_older: { de: "Frühere Zusammenfassungen", en: "Earlier summaries", pl: "Wcześniejsze podsumowania" },
+    vg_none: { de: "Noch keine Zusammenfassung erstellt.", en: "No summary created yet.", pl: "Brak podsumowania." },
+    vg_with_tr: { de: "mit Transkript", en: "with transcript", pl: "z transkrypcją" },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -1454,6 +1461,20 @@
     chain.then(function () { state.busy.all = false; render(); });
   }
 
+  function videoGesamtbild(all) {
+    if (!all.length) return "";
+    var sums = byKind("analysis").filter(function (e) { return e.data.scope === "videos"; }).sort(function (a, b) { return b.id - a.id; });
+    var kannKi = hasKey() || (state.settings && state.settings.claude_translate);
+    var mitTr = all.filter(function (e) { return e.data.transcript && e.data.transcript.text; }).length;
+    return '<section class="analyse-panel"><div class="analyse-kopf"><div><h2>✦ ' + esc(tr("vg_title")) + "</h2><p>" + esc(tr("vg_sub")) + "</p></div>" +
+      (kannKi ? '<button type="button" class="knopf ki gross" data-act="ai-videos"' + (state.busy.videos ? " disabled" : "") + ">✦ " + esc(tr("vg_btn")) +
+        ' <span class="knopf-thema">(' + all.length + ")</span></button>" : "") + "</div>" +
+      '<p class="analyse-daten">ⓘ ' + esc(tr("vg_note")) + " " + mitTr + "/" + all.length + " " + esc(tr("vg_with_tr")) + ".</p>" +
+      (kannKi ? "" : needKey()) + busyHtml("videos") +
+      (sums.length ? analysisCard(sums[0], true) : (kannKi && !state.busy.videos ? '<p class="hinweis">' + esc(tr("vg_none")) + "</p>" : "")) +
+      (sums.length > 1 ? '<details class="aeltere"><summary>' + esc(tr("vg_older")) + " (" + (sums.length - 1) + ')</summary><div class="liste">' +
+        sums.slice(1).map(function (e) { return analysisCard(e, false); }).join("") + "</div></details>" : "") + "</section>";
+  }
   function renderVideos() {
     var items = byKind("video").filter(function (e) {
       return (!state.vCat || (e.data.category || "sonstiges") === state.vCat) && (!state.vLang || e.data.vlang === state.vLang);
@@ -1488,7 +1509,7 @@
     return '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("tab_videos")) + "</h2><p>" + esc(tr("videos_sub")) + "</p></div>" +
       '<div class="knoepfe">' + (all.some(videoPending) ? '<button type="button" class="knopf ki" data-act="v-all"' + (state.busy.all ? " disabled" : "") + ">✦ " + esc(tr("v_all")) +
         " (" + all.filter(videoPending).length + ")</button>" : "") +
-      '<button type="button" class="knopf" data-act="new" data-kind="video">' + esc(tr("new_video")) + "</button></div></div>" + chips + body + "</section>";
+      '<button type="button" class="knopf" data-act="new" data-kind="video">' + esc(tr("new_video")) + "</button></div></div>" + videoGesamtbild(all) + chips + body + "</section>";
   }
   function openPlayer(e) {
     var d = e.data;
@@ -2682,8 +2703,8 @@
       aiCall("an" + id, "/api/ai/analyze/" + id, { lang: state.lang }).then(function (e) { replaceEntry(e); render(); }, function () {});
       return;
     }
-    if (act === "ai-values" || act === "ai-hints" || act === "ai-studies") {
-      var k = act === "ai-values" ? "values" : act === "ai-hints" ? "hints" : "studies";
+    if (act === "ai-values" || act === "ai-hints" || act === "ai-studies" || act === "ai-videos") {
+      var k = act === "ai-values" ? "values" : act === "ai-hints" ? "hints" : act === "ai-studies" ? "studies" : "videos";
       aiCall(k, "/api/ai/" + k, { lang: state.lang }).then(function (e) { replaceEntry(e); render(); }, function () {});
       return;
     }
