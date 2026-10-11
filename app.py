@@ -40,7 +40,7 @@ MAX_BYTES = 30 * 1024 * 1024
 # Befunde kommen als PDF oder als Handyfoto; anderes wird abgelehnt
 ERLAUBT = {
     ".pdf": "application/pdf", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
-    ".heic": "image/heic", ".heif": "image/heif", ".webp": "image/webp",
+    ".heic": "image/heic", ".heif": "image/heif", ".webp": "image/webp", ".csv": "text/csv",
 }
 
 app = FastAPI(title="Research Notebook")
@@ -417,7 +417,7 @@ def datei_speichern(eid, dateiname, inhalt):
     name = Path(dateiname or "datei").name[:150]
     endung = Path(name).suffix.lower()
     if endung not in ERLAUBT:
-        raise HTTPException(415, "Nur PDF oder Bilder (JPG, PNG, HEIC, WEBP)")
+        raise HTTPException(415, "Nur PDF, Bilder (JPG, PNG, HEIC, WEBP) oder CSV")
     if len(inhalt) > MAX_BYTES:
         raise HTTPException(413, "Datei größer als 30 MB")
     if endung == ".pdf" and not inhalt.startswith(b"%PDF"):
@@ -550,7 +550,8 @@ NAMEN = {"de": "Deutsch", "en": "Englisch", "pl": "Polnisch"}
 PARAM_NAMEN = {"leuko": "Leukozyten", "neutro": "Neutrophile (absolut)", "hb": "Hämoglobin", "thrombo": "Thrombozyten",
                "alt": "ALT (GPT)", "ast": "AST (GOT)", "ggt": "Gamma-GT", "krea": "Kreatinin", "ca153": "CA 15-3",
                "cea": "CEA", "vitd": "Vitamin D (25-OH)", "lvef": "LVEF (Herz-Echo)", "weight": "Körpergewicht",
-               "b12": "Vitamin B12", "ferritin": "Ferritin", "hba1c": "HbA1c", "ldl": "LDL-Cholesterin", "tsh": "TSH"}
+               "b12": "Vitamin B12", "ferritin": "Ferritin", "hba1c": "HbA1c", "ldl": "LDL-Cholesterin", "tsh": "TSH",
+               "bp_sys": "Blutdruck systolisch", "bp_dia": "Blutdruck diastolisch", "pulse": "Puls", "glucose": "Blutzucker"}
 OPENAI = "https://api.openai.com/v1"
 
 def system_text():
@@ -701,14 +702,26 @@ def kontext(details=True):
     def de(v):
         return (v or {}).get("de") or next((x for x in (v or {}).values() if x), "") if isinstance(v, dict) else (v or "")
     teile = []
-    werte = sorted((e for e in rows if e["kind"] == "value"), key=lambda e: (e["data"].get("param", ""), e["data"].get("date", "")))
+    werte = sorted((e for e in rows if e["kind"] == "value"),
+                   key=lambda e: (e["data"].get("paramLabel") or e["data"].get("param", ""), e["data"].get("date", ""), e["data"].get("time") or ""))
     if werte:
-        teile.append("## Laborwerte und Messungen (Datum: Wert Einheit [Referenz] Notiz)")
+        teile.append("## Laborwerte und Messungen (Datum Uhrzeit: Wert Einheit [Referenz] Notiz)")
+        reihen = {}
         for e in werte:
             d = e["data"]
-            name = d.get("paramLabel") or PARAM_NAMEN.get(d.get("param"), d.get("param"))
-            ref = f"[{d.get('low') if d.get('low') is not None else ''}–{d.get('high') if d.get('high') is not None else ''}]"
-            teile.append(f"- {name} {d.get('date')}: {d.get('value')} {d.get('unit', '')} {ref} {de(d.get('note'))}".rstrip())
+            reihen.setdefault(d.get("paramLabel") or PARAM_NAMEN.get(d.get("param"), d.get("param")), []).append(d)
+        for name, liste in reihen.items():
+            # Bei vielen Messungen (z. B. importierte Blutdruckreihen) Statistik + die letzten 30 statt aller Zeilen
+            if len(liste) > 30:
+                zahlen = [x.get("value") for x in liste if isinstance(x.get("value"), (int, float))]
+                if zahlen:
+                    teile.append(f"- {name}: insgesamt {len(liste)} Messungen vom {liste[0].get('date')} bis {liste[-1].get('date')}, "
+                                 f"Mittel {sum(zahlen) / len(zahlen):.1f}, Min {min(zahlen)}, Max {max(zahlen)} {liste[-1].get('unit', '')}; die letzten 30:")
+                liste = liste[-30:]
+            for d in liste:
+                ref = f"[{d.get('low') if d.get('low') is not None else ''}–{d.get('high') if d.get('high') is not None else ''}]"
+                zeit = f" {d['time']}" if d.get("time") else ""
+                teile.append(f"- {name} {d.get('date')}{zeit}: {d.get('value')} {d.get('unit', '')} {ref} {de(d.get('note'))}".rstrip())
     befunde = [e for e in rows if e["kind"] == "finding"]
     if befunde:
         teile.append("\n## Befunde und eigene Einschätzungen")
@@ -764,6 +777,9 @@ def dateien_fuer_ki(files):
             teile.append({"type": "input_file", "filename": f["name"], "file_data": f"data:application/pdf;base64,{b64}"})
         elif f["mime"] in ("image/jpeg", "image/png", "image/webp"):
             teile.append({"type": "input_image", "image_url": f"data:{f['mime']};base64,{b64}"})
+        elif f["mime"] == "text/csv":
+            roh = pfad.read_bytes()[:40000].decode("utf-8", errors="replace")
+            teile.append({"type": "input_text", "text": f"Angehängte Tabelle {f['name']} (CSV, ggf. gekürzt):\n{roh}"})
         else:
             hinweise.append(f["name"])
     return teile, hinweise
@@ -2480,6 +2496,175 @@ def studie_zusammenfassen(eid: int, s: Sprache):
         out_e = zeile(con.execute("SELECT * FROM entries WHERE id=?", (eid,)).fetchone(), con)
     protokoll(f"Studie eingeordnet #{eid}")
     return out_e
+
+
+
+# ---------------------------------------------------------------------------
+# CSV-Import von Messwerten (z. B. Blutdruck aus einem Messgerät oder einer App)
+# ---------------------------------------------------------------------------
+
+import csv
+import io
+
+CSV_MUSTER = [  # (Schlüssel, Muster für Spaltennamen, Einheit, Ref von, Ref bis)
+    ("bp_sys", r"sys|skurcz", "mmHg", None, 140),
+    ("bp_dia", r"dia|rozkurcz", "mmHg", None, 90),
+    ("pulse", r"puls|pulse|heart.?rate|herz.?frequenz|\bhr\b|bpm|tętno", "/min", 50, 100),
+    ("weight", r"gewicht|weight|waga|masa", "kg", None, None),
+    ("glucose", r"zucker|glucose|glukose|glukoza", "mg/dl", 70, 100),
+]
+DATUM_SPALTE = r"datum|date|data|tag|day|zeitpunkt|timestamp|measured|gemessen"
+ZEIT_SPALTE = r"^(zeit|uhrzeit|time|godzina|czas)\b"
+
+
+def _csv_text(text):
+    text = (text or "").lstrip("\ufeff")
+    if len(text) > 5_000_000:
+        raise HTTPException(413, "Die CSV-Datei ist zu groß (höchstens 5 MB).")
+    zeilen = [z for z in text.splitlines() if z.strip()]
+    if len(zeilen) < 2:
+        raise HTTPException(400, "Die Datei enthält keine Tabelle (mindestens Kopfzeile und eine Datenzeile nötig).")
+    probe = "\n".join(zeilen[:20])
+    try:
+        trenner = csv.Sniffer().sniff(probe, delimiters=";,\t|").delimiter
+    except csv.Error:
+        trenner = max(";,\t|", key=lambda t: probe.count(t))
+    reihen = [r for r in csv.reader(io.StringIO("\n".join(zeilen)), delimiter=trenner)]
+    # Vorspann mancher Exporte überspringen: Kopfzeile = erste Zeile mit der häufigsten Spaltenzahl
+    breite = max(set(len(r) for r in reihen), key=lambda n: sum(1 for r in reihen if len(r) == n))
+    if breite < 2:
+        raise HTTPException(400, "Keine Spalten erkannt — ist es wirklich eine CSV-Datei?")
+    start = next(i for i, r in enumerate(reihen) if len(r) == breite)
+    kopf = [k.strip() or f"Spalte {i + 1}" for i, k in enumerate(reihen[start])]
+    daten = [r for r in reihen[start + 1:] if len(r) == breite and any(c.strip() for c in r)]
+    return trenner, kopf, daten
+
+
+def _zahl_csv(x):
+    m = re.search(r"-?\d+(?:[.,]\d+)?", str(x or ""))
+    return float(m.group(0).replace(",", ".")) if m else None
+
+
+def _datum_csv(x):
+    """→ (YYYY-MM-DD, HH:MM oder ''), sonst None. Versteht 2026-10-11, 11.10.2026, 11/10/2026, mit oder ohne Uhrzeit."""
+    t = str(x or "").strip()
+    zeit = ""
+    mz = re.search(r"(\d{1,2}):(\d{2})(?::\d{2})?\s*(am|pm|AM|PM)?", t)
+    if mz:
+        h, mi = int(mz.group(1)), int(mz.group(2))
+        if mz.group(3) and mz.group(3).lower() == "pm" and h < 12:
+            h += 12
+        if mz.group(3) and mz.group(3).lower() == "am" and h == 12:
+            h = 0
+        zeit = f"{h:02d}:{mi:02d}"
+    m = re.search(r"(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})", t)
+    if m:
+        j, mo, ta = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    else:
+        m = re.search(r"(\d{1,2})[./](\d{1,2})[./](\d{2,4})", t)
+        if not m:
+            return None
+        a_, b_, j = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        j += 2000 if j < 100 else 0
+        # Europäische Schreibweise (Tag zuerst), außer es geht nur amerikanisch (zweite Zahl > 12)
+        ta, mo = (b_, a_) if (b_ > 12 and a_ <= 12 and "/" in t) else (a_, b_)
+    try:
+        return datetime(j, mo, ta).strftime("%Y-%m-%d"), zeit
+    except ValueError:
+        return None
+
+
+def _csv_vorschlag(kopf, daten):
+    probe = daten[:30]
+    datum_spalte = next((i for i, k in enumerate(kopf) if re.search(DATUM_SPALTE, k, re.I) and sum(1 for r in probe if _datum_csv(r[i])) >= len(probe) // 2), None)
+    if datum_spalte is None:
+        datum_spalte = next((i for i in range(len(kopf)) if probe and sum(1 for r in probe if _datum_csv(r[i])) >= max(1, len(probe) * 0.8)), None)
+    zeit_spalte = next((i for i, k in enumerate(kopf) if i != datum_spalte and re.search(ZEIT_SPALTE, k.strip(), re.I)), None)
+    spalten = []
+    vergeben = set()
+    for i, k in enumerate(kopf):
+        if i in (datum_spalte, zeit_spalte):
+            continue
+        zahlen = sum(1 for r in probe if _zahl_csv(r[i]) is not None)
+        if not probe or zahlen < len(probe) * 0.6:
+            continue
+        treffer = next((m for m in CSV_MUSTER if m[0] not in vergeben and re.search(m[1], k, re.I)), None)
+        einheit = (re.search(r"\(([^)]+)\)|\[([^\]]+)\]", k) or [None])
+        einheit = (einheit.group(1) or einheit.group(2)).strip() if hasattr(einheit, "group") else ""
+        if treffer:
+            vergeben.add(treffer[0])
+            spalten.append({"col": i, "use": True, "param": treffer[0], "label": "", "unit": einheit or treffer[2], "low": treffer[3], "high": treffer[4]})
+        else:
+            name = re.sub(r"\s*[\(\[].*?[\)\]]", "", k).strip() or k
+            spalten.append({"col": i, "use": False, "param": "_other", "label": name, "unit": einheit, "low": None, "high": None})
+    return {"date_col": datum_spalte, "time_col": zeit_spalte, "columns": spalten}
+
+
+class CsvText(BaseModel):
+    text: str
+    topic: int | None = None
+
+
+@app.post("/api/values/csv/preview")
+def csv_vorschau(c: CsvText):
+    trenner, kopf, daten = _csv_text(c.text)
+    return {"delimiter": trenner, "headers": kopf, "sample": daten[:6], "total": len(daten), "guess": _csv_vorschlag(kopf, daten)}
+
+
+class CsvImport(BaseModel):
+    text: str
+    topic: int | None = None
+    date_col: int
+    time_col: int | None = None
+    columns: list[dict]
+
+
+@app.post("/api/values/csv/import")
+def csv_importieren(c: CsvImport):
+    tid = thema_setzen(c.topic)["id"]
+    _, kopf, daten = _csv_text(c.text)
+    if not (0 <= c.date_col < len(kopf)):
+        raise HTTPException(400, "Bitte die Datumsspalte wählen.")
+    spalten = [x for x in c.columns if x.get("use") and isinstance(x.get("col"), int) and 0 <= x["col"] < len(kopf)]
+    if not spalten:
+        raise HTTPException(400, "Bitte mindestens eine Spalte zum Importieren auswählen.")
+    for x in spalten:
+        if x.get("param") == "_other" and not (x.get("label") or "").strip():
+            x["label"] = kopf[x["col"]]
+    with db() as con:
+        vorhanden = set()
+        for r in con.execute("SELECT data FROM entries WHERE kind='value' AND topic_id=?", (tid,)):
+            d = json.loads(r["data"])
+            vorhanden.add((d.get("param"), d.get("paramLabel") or "", d.get("date"), d.get("time") or "", d.get("value")))
+        neu_n, doppelt, ohne_datum, jetzt_ = 0, 0, 0, jetzt()
+        for zeile_ in daten:
+            dz = _datum_csv(zeile_[c.date_col])
+            if not dz:
+                ohne_datum += 1
+                continue
+            datum, zeit = dz
+            if c.time_col is not None and 0 <= c.time_col < len(kopf):
+                z2 = _datum_csv("2000-01-01 " + zeile_[c.time_col])
+                zeit = z2[1] if z2 and z2[1] else zeit
+            for x in spalten:
+                wert = _zahl_csv(zeile_[x["col"]])
+                if wert is None:
+                    continue
+                param = x.get("param") or "_other"
+                label = (x.get("label") or "").strip() if param == "_other" else ""
+                schluessel = (param, label, datum, zeit, wert)
+                if schluessel in vorhanden:
+                    doppelt += 1
+                    continue
+                vorhanden.add(schluessel)
+                data = {"param": param, "paramLabel": label, "date": datum, "time": zeit, "value": wert,
+                        "unit": (x.get("unit") or "").strip(), "low": x.get("low"), "high": x.get("high"),
+                        "note": {l: "" for l in LANGS}, "source": "csv"}
+                con.execute("INSERT INTO entries (kind, data, created, updated, topic_id) VALUES (?,?,?,?,?)",
+                            ("value", json.dumps(data, ensure_ascii=False), jetzt_, jetzt_, tid))
+                neu_n += 1
+    protokoll(f"CSV-Import Thema #{tid}: {neu_n} Messwerte neu, {doppelt} doppelt übersprungen, {ohne_datum} Zeilen ohne Datum")
+    return {"created": neu_n, "duplicates": doppelt, "no_date": ohne_datum, "rows": len(daten)}
 
 
 @app.get("/")

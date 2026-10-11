@@ -369,6 +369,25 @@
     sg_note: { de: "Nur die Studien dieses Themas — Titel, Abstracts, Eckdaten und bisherige Einordnungen werden dafür an die KI übermittelt.", en: "Only the studies in this topic — titles, abstracts, key data and earlier assessments are sent to the AI for this.", pl: "Tylko badania tego tematu — tytuły, streszczenia, dane i wcześniejsze oceny są w tym celu przesyłane do AI." },
     sg_older: { de: "Frühere Zusammenfassungen", en: "Earlier summaries", pl: "Wcześniejsze podsumowania" },
     sg_none: { de: "Noch keine Zusammenfassung erstellt.", en: "No summary created yet.", pl: "Brak podsumowania." },
+    csv_btn: { de: "↑ CSV importieren", en: "↑ Import CSV", pl: "↑ Import CSV" },
+    csv_title: { de: "Messwerte aus CSV importieren", en: "Import measurements from CSV", pl: "Import pomiarów z CSV" },
+    csv_file: { de: "CSV-Datei (z. B. Export eines Blutdruckmessgeräts oder einer Gesundheits-App)", en: "CSV file (e.g. export from a blood pressure monitor or health app)", pl: "Plik CSV (np. eksport z ciśnieniomierza lub aplikacji)" },
+    csv_found: { de: "Zeilen gefunden", en: "rows found", pl: "wierszy znaleziono" },
+    csv_date: { de: "Datum (mit oder ohne Uhrzeit)", en: "Date (with or without time)", pl: "Data (z godziną lub bez)" },
+    csv_time: { de: "Uhrzeit (eigene Spalte)", en: "Time (separate column)", pl: "Godzina (osobna kolumna)" },
+    csv_none: { de: "— keine —", en: "— none —", pl: "— brak —" },
+    csv_cols: { de: "Welche Spalten sollen Messwerte werden?", en: "Which columns become measurements?", pl: "Które kolumny mają być pomiarami?" },
+    csv_column: { de: "Spalte", en: "Column", pl: "Kolumna" },
+    csv_as: { de: "als Wert", en: "as value", pl: "jako" },
+    csv_preview: { de: "Vorschau der ersten Zeilen", en: "Preview of the first rows", pl: "Podgląd pierwszych wierszy" },
+    csv_import: { de: "Importieren", en: "Import", pl: "Importuj" },
+    csv_done: { de: "Importiert: {n} Messwerte", en: "Imported: {n} measurements", pl: "Zaimportowano: {n} pomiarów" },
+    csv_dupes: { de: "{n} schon vorhanden (übersprungen)", en: "{n} already present (skipped)", pl: "{n} już istnieje (pominięto)" },
+    csv_nodate: { de: "{n} Zeilen ohne lesbares Datum", en: "{n} rows without readable date", pl: "{n} wierszy bez daty" },
+    csv_hint: { de: "Doppelte Messungen werden beim erneuten Import übersprungen. Normbereiche sind übliche Werte für Heimmessungen — bei Bedarf anpassen.", en: "Duplicate measurements are skipped on re-import. Reference ranges are common values for home readings — adjust if needed.", pl: "Powtórzone pomiary są pomijane przy ponownym imporcie. Zakresy to typowe wartości dla pomiarów domowych — w razie potrzeby zmień." },
+    csv_need_date: { de: "Bitte die Datumsspalte wählen.", en: "Please choose the date column.", pl: "Wybierz kolumnę z datą." },
+    csv_need_col: { de: "Bitte mindestens eine Spalte zum Importieren auswählen.", en: "Please select at least one column to import.", pl: "Wybierz co najmniej jedną kolumnę." },
+    csv_reading: { de: "Lese Datei …", en: "Reading file …", pl: "Czytam plik …" },
     edit_lang: { de: "Du bearbeitest die deutsche Fassung.", en: "You are editing the English version.", pl: "Edytujesz wersję polską." }
   };
 
@@ -382,6 +401,10 @@
     { key: "ast", unit: "U/l", low: null, high: 35, n: { de: "AST (GOT)", en: "AST", pl: "AST (AspAT)" } },
     { key: "ggt", unit: "U/l", low: null, high: 40, n: { de: "Gamma-GT", en: "GGT", pl: "GGTP" } },
     { key: "krea", unit: "mg/dl", low: 0.5, high: 0.9, n: { de: "Kreatinin", en: "Creatinine", pl: "Kreatynina" } },
+    { key: "bp_sys", unit: "mmHg", low: null, high: 140, n: { de: "Blutdruck systolisch", en: "Blood pressure systolic", pl: "Ciśnienie skurczowe" } },
+    { key: "bp_dia", unit: "mmHg", low: null, high: 90, n: { de: "Blutdruck diastolisch", en: "Blood pressure diastolic", pl: "Ciśnienie rozkurczowe" } },
+    { key: "pulse", unit: "/min", low: 50, high: 100, n: { de: "Puls", en: "Pulse", pl: "Tętno" } },
+    { key: "glucose", unit: "mg/dl", low: 70, high: 100, n: { de: "Blutzucker (nüchtern)", en: "Blood glucose (fasting)", pl: "Glukoza (na czczo)" } },
     { key: "b12", unit: "pg/ml", low: 200, high: 900, n: { de: "Vitamin B12", en: "Vitamin B12", pl: "Witamina B12" } },
     { key: "ferritin", unit: "ng/ml", low: 15, high: 150, n: { de: "Ferritin (Eisenspeicher)", en: "Ferritin (iron stores)", pl: "Ferrytyna (zapasy żelaza)" } },
     { key: "hba1c", unit: "%", low: null, high: 5.7, n: { de: "HbA1c (Langzeitzucker)", en: "HbA1c (long-term blood sugar)", pl: "HbA1c (hemoglobina glikowana)" } },
@@ -447,7 +470,7 @@
     settings: null, models: null, busy: {}, drafts: {}, aiIn: { web: true, mappe: false }, aiErr: {}, confirmKey: false, st: { q: "", source: "pubmed", land: "", open: true, recent: false, results: null, total: 0, imp: "" }, vCat: "", vLang: "", preview: null,
     chats: null, chat: null, chatIn: "", chatOpts: { web: false, mappe: true }, stream: null, chatAbort: null, chatConfirm: null, openGloss: {}, glossAll: false, explain: null, planPrefill: null, showInactive: false, mcp: null, mcpShow: {}, mcpConfirm: null,
     topics: null, topic: null, topicConfirm: false, topicQuery: "" };
-  var OK_EXT = /\.(pdf|jpe?g|png|heic|heif|webp)$/i;
+  var OK_EXT = /\.(pdf|jpe?g|png|heic|heif|webp|csv)$/i;
   var MAX_BYTES = 30 * 1024 * 1024;
 
   // ---------- Hilfen ----------
@@ -850,7 +873,10 @@
     });
     var groups = order.map(function (k) { return map[k]; });
     groups.forEach(function (g) {
-      g.items.sort(function (a, b) { return a.data.date < b.data.date ? -1 : a.data.date > b.data.date ? 1 : a.id - b.id; });
+      g.items.sort(function (a, b) {
+        var ka = (a.data.date || "") + " " + (a.data.time || ""), kb = (b.data.date || "") + " " + (b.data.time || "");
+        return ka < kb ? -1 : ka > kb ? 1 : a.id - b.id;
+      });
       g.lastDate = g.items[g.items.length - 1].data.date;
     });
     groups.sort(function (a, b) { return a.lastDate < b.lastDate ? 1 : -1; });
@@ -895,7 +921,7 @@
             ' <button type="button" class="knopf klein gefahr" data-act="del-yes" data-id="' + e.id + '">' + esc(tr("yes_del")) + "</button>" +
             ' <button type="button" class="knopf klein" data-act="del-no">' + esc(tr("cancel")) + "</button></span></td></tr>";
         }
-        return "<tr><td>" + fmtDate(d.date) + '</td><td class="wert">' + fmtNum(d.value) + " " + esc(d.unit || "") + " " + flagHtml(flag(d.value, d.low, d.high)) +
+        return "<tr><td>" + fmtDate(d.date) + (d.time ? ' <span class="hinweis">' + esc(d.time) + "</span>" : "") + '</td><td class="wert">' + fmtNum(d.value) + " " + esc(d.unit || "") + " " + flagHtml(flag(d.value, d.low, d.high)) +
           '</td><td class="notiz">' + hl(L(d.note)) + filesHtml(e, true) + '</td><td style="white-space:nowrap">' +
           '<button type="button" class="knopf klein" data-act="edit" data-id="' + e.id + '">' + esc(tr("edit")) + "</button> " +
           '<button type="button" class="knopf klein gefahr" data-act="del" data-id="' + e.id + '" aria-label="' + esc(tr("del")) + '">×</button></td></tr>';
@@ -913,6 +939,7 @@
     var findings = byKind("finding").sort(function (a, b) { return (a.data.date || "") < (b.data.date || "") ? 1 : -1; });
     return '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("labs")) + "</h2><p>" + esc(tr("labs_sub")) + "</p></div>" +
       '<div class="knoepfe">' + (hasKey() && groups.length ? '<button type="button" class="knopf ki" data-act="ai-values"' + (state.busy.values ? " disabled" : "") + ">✦ " + esc(tr("ai_values_btn")) + "</button>" : "") +
+      '<button type="button" class="knopf" data-act="csv-open">' + esc(tr("csv_btn")) + "</button>" +
       '<button type="button" class="knopf" data-act="new" data-kind="value">' + esc(tr("new_value")) + "</button></div></div>" + busyHtml("values") +
       (labs ? '<div class="liste">' + labs + "</div>" : q ? '<div class="leer">' + esc(tr("empty_search")) + "</div>" : emptyBox("empty_values", "value")) + "</section>" +
       '<section class="abschnitt"><div class="abschnitt-kopf"><div><h2>' + esc(tr("findings")) + "</h2><p>" + esc(tr("findings_sub")) + "</p></div>" +
@@ -1696,6 +1723,90 @@
     return chain.then(function () { return { entry: current, failed: failed }; });
   }
 
+  function openCsvForm() {
+    state.editKind = "csv";
+    state.editing = null;
+    state.csv = null;
+    $("formFelder").innerHTML = "<label>" + esc(tr("csv_file")) + '<input id="fld-csvfile" type="file" accept=".csv,text/csv,.txt,text/plain"></label>' +
+      '<div id="csvMap"></div><span class="hinweis">' + esc(tr("csv_hint")) + "</span>";
+    $("formTitel").textContent = tr("csv_title");
+    $("formStatus").textContent = "";
+    $("formSpeichern").disabled = true;
+    $("formSpeichern").textContent = tr("csv_import");
+    $("uebersetzen").parentNode.hidden = true;
+    $("schleier").hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+  function csvParamOpts(cur) {
+    var presets = isHealth() ? PARAMS : [];
+    return presets.map(function (p) { return '<option value="' + p.key + '"' + (cur === p.key ? " selected" : "") + ">" + esc(p.n[state.lang]) + "</option>"; }).join("") +
+      '<option value="_other"' + (cur === "_other" ? " selected" : "") + ">" + esc(tr("f_param_other")) + "</option>";
+  }
+  function renderCsvMap() {
+    var c = state.csv;
+    if (!c) { $("csvMap").innerHTML = ""; return; }
+    var h = c.headers, g = c.guess;
+    var colOpts = function (cur, leer) {
+      return (leer ? '<option value="">' + esc(tr("csv_none")) + "</option>" : "") + h.map(function (k, i) {
+        return '<option value="' + i + '"' + (cur === i ? " selected" : "") + ">" + esc(k) + "</option>";
+      }).join("");
+    };
+    var rows = g.columns.map(function (col, j) {
+      return '<tr data-j="' + j + '"><td><label class="haken"><input type="checkbox" data-csv="use"' + (col.use ? " checked" : "") + "> " + esc(h[col.col]) + "</label></td>" +
+        '<td><select data-csv="param">' + csvParamOpts(col.param) + "</select>" +
+        '<input type="text" data-csv="label" value="' + esc(col.label || "") + '" placeholder="' + esc(tr("f_param_name")) + '"' + (col.param === "_other" ? "" : " hidden") + "></td>" +
+        '<td><input type="text" data-csv="unit" value="' + esc(col.unit || "") + '"></td>' +
+        '<td><input type="text" inputmode="decimal" data-csv="low" value="' + (col.low != null ? fmtNum(col.low) : "") + '"></td>' +
+        '<td><input type="text" inputmode="decimal" data-csv="high" value="' + (col.high != null ? fmtNum(col.high) : "") + '"></td></tr>';
+    }).join("");
+    $("csvMap").innerHTML = '<p class="csv-info"><b>' + c.total + "</b> " + esc(tr("csv_found")) + "</p>" +
+      '<div class="reihe"><label>' + esc(tr("csv_date")) + '<select id="fld-csvdate">' + colOpts(g.date_col, true) + "</select></label>" +
+      "<label>" + esc(tr("csv_time")) + '<select id="fld-csvtime">' + colOpts(g.time_col, true) + "</select></label></div>" +
+      '<div class="eyebrow">' + esc(tr("csv_cols")) + '</div><div class="mp-wrap"><table class="csv-tabelle"><thead><tr><th>' + esc(tr("csv_column")) + "</th><th>" + esc(tr("csv_as")) +
+      "</th><th>" + esc(tr("f_unit")) + "</th><th>" + esc(tr("f_low")) + "</th><th>" + esc(tr("f_high")) + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>" +
+      '<details><summary>' + esc(tr("csv_preview")) + '</summary><div class="mp-wrap"><table class="csv-tabelle vorschau"><thead><tr>' +
+      h.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      c.sample.map(function (r) { return "<tr>" + r.map(function (x) { return "<td>" + esc(x) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div></details>";
+    $("formSpeichern").disabled = false;
+  }
+  function readCsvMap() {
+    var g = state.csv.guess;
+    Array.prototype.forEach.call(document.querySelectorAll("#csvMap tr[data-j]"), function (tr_) {
+      var col = g.columns[Number(tr_.getAttribute("data-j"))];
+      var q = function (k) { return tr_.querySelector('[data-csv="' + k + '"]'); };
+      col.use = q("use").checked;
+      col.param = q("param").value;
+      col.label = q("label").value.trim();
+      col.unit = q("unit").value.trim();
+      var lo = num(q("low").value), hi = num(q("high").value);
+      col.low = lo == null || isNaN(lo) ? null : lo;
+      col.high = hi == null || isNaN(hi) ? null : hi;
+    });
+    var dv = $("fld-csvdate").value, tv = $("fld-csvtime").value;
+    g.date_col = dv === "" ? null : Number(dv);
+    g.time_col = tv === "" ? null : Number(tv);
+  }
+  function submitCsv() {
+    if (!state.csv) return;
+    readCsvMap();
+    var g = state.csv.guess;
+    if (g.date_col == null) { $("formStatus").textContent = tr("csv_need_date"); return; }
+    if (!g.columns.some(function (c) { return c.use; })) { $("formStatus").textContent = tr("csv_need_col"); return; }
+    $("formSpeichern").disabled = true;
+    $("formStatus").textContent = tr("saving");
+    fetch("/api/values/csv/import", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+      body: JSON.stringify({ text: state.csv.text, topic: state.topic, date_col: g.date_col, time_col: g.time_col, columns: g.columns }) })
+      .then(function (r) { return r.ok ? r.json() : errText(r, tr("err_save")); })
+      .then(function (res) {
+        closeForm();
+        var msg = tr("csv_done").replace("{n}", res.created);
+        if (res.duplicates) msg += " · " + tr("csv_dupes").replace("{n}", res.duplicates);
+        if (res.no_date) msg += " · " + tr("csv_nodate").replace("{n}", res.no_date);
+        toast(msg);
+        loadEntries();
+      }, function (err) { $("formSpeichern").disabled = false; $("formStatus").textContent = err.message; });
+  }
+
   function openTopicForm(t) {
     state.editKind = "topic";
     state.editing = t || null;
@@ -1716,6 +1827,7 @@
       "<label>" + esc(tr("t_context")) + '<input id="fld-tcontext" type="text" placeholder="' + esc(tr("t_context_ph")) + '" value="' + esc(t ? t.context || "" : "") + '"></label>' +
       (t ? '<div id="topicDel">' + topicDelHtml() + "</div>" : "");
     $("formFelder").innerHTML = html;
+    $("formSpeichern").textContent = tr("save");
     $("formTitel").textContent = tr(t ? "t_edit" : "t_new_title");
     $("formStatus").textContent = "";
     $("formSpeichern").disabled = false;
@@ -1747,6 +1859,7 @@
 
   function openForm(kind, entry, files) {
     $("uebersetzen").parentNode.hidden = false;
+    $("formSpeichern").textContent = tr("save");
     state.pending = [];
     state.editKind = kind;
     state.editing = entry || null;
@@ -1829,7 +1942,7 @@
       });
     }
     html += '<div class="datei-feld"><label>' + esc(tr("f_files")) +
-      '<input id="fld-files" type="file" multiple accept=".pdf,application/pdf,image/*"></label>' +
+      '<input id="fld-files" type="file" multiple accept=".pdf,application/pdf,image/*,.csv,text/csv"></label>' +
       '<span class="hinweis">' + esc(tr("f_files_hint")) + '</span><div id="dateiListe"></div></div>';
     html += '<span class="hinweis">' + esc(tr("edit_lang")) + "</span>";
     $("formFelder").innerHTML = html;
@@ -1880,6 +1993,7 @@
   function submitForm(ev) {
     ev.preventDefault();
     if (state.editKind === "topic") { submitTopic(); return; }
+    if (state.editKind === "csv") { submitCsv(); return; }
     var kind = state.editKind;
     var old = state.editing ? state.editing.data : {};
     var data = JSON.parse(JSON.stringify(old));
@@ -2064,6 +2178,7 @@
       render(); return;
     }
     if (act === "gloss-all") { state.glossAll = !state.glossAll; state.openGloss = {}; render(); return; }
+    if (act === "csv-open") { openCsvForm(); return; }
     if (act === "plan-from-med" && entry) {
       state.planPrefill = { med_id: entry.id, name: L(entry.data.title).replace(/\s*\(.*\)\s*$/, "") };
       openForm("medplan");
@@ -2312,6 +2427,33 @@
     setTimeout(function () { loadPreview(); }, 30);
   });
   $("formFelder").addEventListener("change", function (ev) {
+    if (ev.target.id === "fld-csvfile") {
+      var f = ev.target.files && ev.target.files[0];
+      if (!f) return;
+      $("formStatus").textContent = tr("csv_reading");
+      var rd = new FileReader();
+      rd.onload = function () {
+        var text = String(rd.result || "");
+        fetch("/api/values/csv/preview", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+          body: JSON.stringify({ text: text, topic: state.topic }) })
+          .then(function (r) { return r.ok ? r.json() : errText(r, tr("err_load")); })
+          .then(function (pv) { pv.text = text; state.csv = pv; $("formStatus").textContent = ""; renderCsvMap(); },
+            function (err) { state.csv = null; renderCsvMap(); $("formStatus").textContent = err.message; });
+      };
+      rd.readAsText(f);
+      return;
+    }
+    if (ev.target.getAttribute && ev.target.getAttribute("data-csv") === "param") {
+      var lab = ev.target.parentNode.querySelector('[data-csv="label"]');
+      lab.hidden = ev.target.value !== "_other";
+      var pr = PARAM_BY_KEY[ev.target.value], tr_ = ev.target.closest("tr");
+      if (pr) {
+        tr_.querySelector('[data-csv="unit"]').value = pr.unit;
+        tr_.querySelector('[data-csv="low"]').value = pr.low != null ? fmtNum(pr.low) : "";
+        tr_.querySelector('[data-csv="high"]').value = pr.high != null ? fmtNum(pr.high) : "";
+      }
+      return;
+    }
     if (ev.target.id === "fld-mpstartunk") {
       $("fld-mpstart").disabled = ev.target.checked;
       if (ev.target.checked) $("fld-mpstart").value = "";

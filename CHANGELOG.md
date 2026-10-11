@@ -2,6 +2,10 @@
 
 ## Unveröffentlicht
 
+- Messwerte aus CSV importieren (z. B. Blutdruckmessgerät, Gesundheits-App): Trennzeichen, Datum/Uhrzeit und typische Spalten (Systolisch, Diastolisch, Puls, Gewicht, Blutzucker; DE/EN/PL) werden erkannt, Zuordnung je Spalte mit Einheit und Normbereich, Vorschau, doppelte Messungen werden übersprungen
+- Messwerte mit Uhrzeit (mehrere Messungen am Tag); neue Vorlagen Blutdruck systolisch/diastolisch, Puls, Blutzucker
+- KI bekommt bei langen Messreihen Statistik (Anzahl, Zeitraum, Mittel, Min, Max) plus die letzten 30 Messungen
+- CSV-Dateien auch als Anhang möglich; die KI liest sie bei der Einordnung mit
 - Studien: „Alle Studien zusammenfassen“ — KI-Gesamtbild über alle gespeicherten Studien des Themas (gemeinsame Aussagen mit Verweisen [Nr.], Widersprüche, Belastbarkeit, laufende Studien, Bezug zum Notizbuch); frühere Fassungen bleiben eingeklappt erhalten
 - Reiter Medikamente zählt nur die Medikamente, nicht zusätzlich die Einträge im Medikamentenplan
 - Medikamentenplan: Beginn „nicht bekannt“ wählbar (auch per MCP mit `start: "unbekannt"`)
